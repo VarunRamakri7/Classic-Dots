@@ -11,6 +11,9 @@ public class S_Dot
     private bool isOccupied;
     private int color;
 
+    /// <summary>
+    /// Default Constructor
+    /// </summary>
     public S_Dot()
     {
         dot = new GameObject();
@@ -19,6 +22,13 @@ public class S_Dot
         SetColor(1);
     }
 
+    /// <summary>
+    /// Instance constructor
+    /// </summary>
+    /// <param name="_dot"></param>
+    /// <param name="position"></param>
+    /// <param name="_color"></param>
+    /// <param name="status"></param>
     public S_Dot(GameObject _dot, Vector3 position, int _color, bool status)
     {
         dot = _dot;
@@ -27,11 +37,23 @@ public class S_Dot
         SetColor(_color);
     }
 
+    /// <summary>
+    /// Copy constructor
+    /// </summary>
+    /// <param name="nextDot"></param>
+    public S_Dot(S_Dot nextDot)
+    {
+        dot = nextDot.dot;
+        cellPos = nextDot.cellPos;
+        isOccupied = nextDot.isOccupied;
+        color = nextDot.color;
+    }
+
     public void SetDotColor(Color _color)
     {
         if (dot.GetComponent<Renderer>() != null)
         {
-            Debug.Log("Setting color: " + (DotColors)color);
+            //Debug.Log("Setting color: " + (DotColors)color);
             dot.GetComponent<Renderer>().material.color = _color;
         }
     }
@@ -40,6 +62,7 @@ public class S_Dot
     public void SetDot(GameObject _dot)
     {
         dot = _dot;
+        dot.transform.position = cellPos;
     }
 
     public GameObject GetDot()
@@ -52,7 +75,7 @@ public class S_Dot
         cellPos = position;
     }
 
-    public Vector3 GetTransform()
+    public Vector3 GetPosition()
     {
         return cellPos;
     }
