@@ -93,28 +93,44 @@ public class S_DotGridManager : MonoBehaviour
 
         for (int i = 0; i < gridSize[0]; i++)
         {
-            int emptyColumn = -1;
-
             for (int j = 0; j < gridSize[1]; j++)
             {
                 if (!filledDots[i][j])
                 {
-                    Debug.Log(string.Format("Empty at: ({0}, {1})", i, j));
-
-                    emptyColumn = j;
+                    //Debug.Log(string.Format("Empty at: ({0}, {1})", i, j));
 
                     MoveDotsDownByOne(i, j);
-
-                    // Move all elements in this column down by one
-                    /*for (int k = i; k >= 0; k--)
-                    {
-                        //dotGrid[k][emptyColumn].SetPosition(dotGrid[k + 1][emptyColumn].GetPosition());
-                        MoveDot(k, emptyColumn, k + 1, emptyColumn);
-                    }*/
                 }
             }
+        }
 
-            // Spawn new Dot on top row
+        // Iterate through top row and refill
+        /*for (int j = 0; j < gridSize[1]; j++)
+        {
+            if (!dotGrid[0][j].IsOccupied())
+            {
+                GameObject dot = Instantiate(prefab, dotGrid[0][j].GetPosition(), Quaternion.identity); // Instantiate the prefab
+                dot.name = "dot(0," + j + ")";
+                dot.transform.parent = gridParent.transform; // Set parent
+                int color = Random.Range(0, 3); // Set color
+
+                dotGrid[0][j] = new S_Dot(dot, dotGrid[0][j].GetPosition(), color, true); // Add dot to grid
+
+            }
+        }*/
+    }
+
+    /// <summary>
+    /// Move dots in this colomn down by one element until row
+    /// </summary>
+    /// <param name="row">Row with an empty cell</param>
+    /// <param name="column">Column with an empty cell</param>
+    public void MoveDotsDownByOne(int row, int column)
+    {
+        // Iterate through column and move dots down by one
+        for (int i = row; i > 0; i--)
+        {
+            MoveDot(i - 1, column, i, column);
         }
     }
 
@@ -127,35 +143,14 @@ public class S_DotGridManager : MonoBehaviour
     /// <param name="v">Next row number</param>
     public void MoveDot(int i, int j, int u, int v)
     {
-        Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {3})", i, j, u, v));
-        //S_Dot temp = dotGrid[i][j]; // Dot to move
+        //Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {3})", i, j, u, v));
+
         dotGrid[u][v].SetDot(dotGrid[i][j].GetDot()); // Copy over GameObject
         dotGrid[u][v].SetColor(dotGrid[i][j].GetColor()); // Copy overcolor
         dotGrid[u][v].SetOccupied(true); // Set occupation status
         dotGrid[i][j].SetDot(new GameObject());
         dotGrid[i][j].SetOccupied(false);
     }
-
-    /// <summary>
-    /// Move dots in this colomn down by one element until row
-    /// </summary>
-    /// <param name="row">Row with an empty cell</param>
-    /// <param name="column">Column with an empty cell</param>
-    public void MoveDotsDownByOne(int row, int column)
-    {
-        for (int i = row; i > 0; i--)
-        {
-            Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {1})", i - 1, column, i));
-            //S_Dot temp = dotGrid[i][j]; // Dot to move
-
-            dotGrid[i][column].SetDot(dotGrid[i - 1][column].GetDot()); // Copy over GameObject
-            dotGrid[i][column].SetColor(dotGrid[i - 1][column].GetColor()); // Copy overcolor
-            dotGrid[i][column].SetOccupied(true); // Set occupation status
-            dotGrid[i - 1][column].SetDot(new GameObject());
-            dotGrid[i - 1][column].SetOccupied(false);
-        }
-    }
-
 
     /// <summary>
     /// Removes the dot GameObject at the given index
