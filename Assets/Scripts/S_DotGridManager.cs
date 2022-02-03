@@ -38,40 +38,49 @@ public class S_DotGridManager : MonoBehaviour
         }
     }
 
-    // Make grid of dots
+    /// <summary>
+    /// Make grid of dots
+    /// </summary>
     public void MakeGrid()
     {
         // Iterate through all rows and columns and instantiate a dot in each cell
         for (int i = 0; i < gridSize[0]; i++)
         {
             for (int j = 0; j < gridSize[1]; j++)
-            {                
+            {
+                // Make new dot
                 Vector3 position = new Vector3(startPos.x + (i * offset), startPos.y, startPos.z + (j * offset));
                 GameObject dot = Instantiate(prefab, position, Quaternion.identity);
                 dot.transform.parent = gridParent.transform;
+                int color = Random.Range(0, 3);
 
-                dotGrid[i][j] = new S_Dot(dot, position, true);
+                dotGrid[i][j] = new S_Dot(dot, position, color, true); // Add dot to grid
             }
         }
     }
 
-    public List<S_Dot> GetEmptyCells()
+    /// <summary>
+    ///  Get a boolean grid where true implies an empty cell
+    /// </summary>
+    /// <returns>2D Array of booleans</returns>
+    public bool[][] GetEmptyCells()
     {
-        List<S_Dot> emptyDots = new List<S_Dot>();
+        bool[][] indices = new bool[gridSize[0]][];
 
         // Iterate through grid to find  all empty locations
         for (int i = 0; i < gridSize[0]; i++)
         {
+            indices[i] = new bool[gridSize[1]];
             for (int j = 0; j < gridSize[1]; j++)
             {
                 if (dotGrid[i][j].IsOccupied())
                 {
-                    emptyDots.Add(dotGrid[i][j]);
+                    indices[i][j] = true;
                 }
             }
         }
 
-        return emptyDots;
+        return indices;
     }
 
     public S_Dot GetDot(int i, int j)
