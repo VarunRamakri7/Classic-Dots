@@ -457,13 +457,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
   m_LocalPosition: {x: 0, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
 --- !u!1 &1257980831
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,8 +496,8 @@ MonoBehaviour:
   prefab: {fileID: 8221352031158747238, guid: 65c6d809d4249c54786e756428800674, type: 3}
   gridParent: {fileID: 816844041}
   startPos: {x: -4, y: 0, z: -4}
-  gridSize: 0400000004000000
-  offset: 2.5
+  gridSize: 0600000006000000
+  offset: 1.5
 --- !u!4 &1257980833
 Transform:
   m_ObjectHideFlags: 0
@@ -549,6 +549,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8221352031158747233, guid: 65c6d809d4249c54786e756428800674,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8221352031158747234, guid: 65c6d809d4249c54786e756428800674,
         type: 3}
       propertyPath: m_RootOrder
