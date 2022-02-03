@@ -49,10 +49,11 @@ public class S_DotGridManager : MonoBehaviour
             for (int j = 0; j < gridSize[1]; j++)
             {
                 // Make new dot
-                Vector3 position = new Vector3(startPos.x + (i * offset), startPos.y, startPos.z + (j * offset));
-                GameObject dot = Instantiate(prefab, position, Quaternion.identity);
-                dot.transform.parent = gridParent.transform;
-                int color = Random.Range(0, 3);
+                Vector3 position = new Vector3(startPos.x + (i * offset), startPos.y, startPos.z + (j * offset)); // Set position while accounting for offset
+                GameObject dot = Instantiate(prefab, position, Quaternion.identity); // Instantiate the prefab
+                dot.name = "dot(" + i + "," + j + ")";
+                dot.transform.parent = gridParent.transform; // Set parent
+                int color = Random.Range(0, 3); // Set color
 
                 dotGrid[i][j] = new S_Dot(dot, position, color, true); // Add dot to grid
             }
@@ -60,14 +61,14 @@ public class S_DotGridManager : MonoBehaviour
     }
 
     /// <summary>
-    ///  Get a boolean grid where true implies an empty cell
+    ///  Get a boolean grid where value reflects ooccupation status
     /// </summary>
     /// <returns>2D Array of booleans</returns>
     public bool[][] GetEmptyCells()
     {
         bool[][] indices = new bool[gridSize[0]][];
 
-        // Iterate through grid to find  all empty locations
+        // Iterate through grid to find all empty locations
         for (int i = 0; i < gridSize[0]; i++)
         {
             indices[i] = new bool[gridSize[1]];
@@ -83,6 +84,96 @@ public class S_DotGridManager : MonoBehaviour
         return indices;
     }
 
+    /// <summary>
+    /// Fill grid with dots again
+    /// </summary>
+    public void RepopulateGrid()
+    {
+        bool[][] filledDots = GetEmptyCells();
+
+        for (int i = 0; i < gridSize[0]; i++)
+        {
+            int emptyColumn = -1;
+
+            for (int j = 0; j < gridSize[1]; j++)
+            {
+                if (!filledDots[i][j])
+                {
+                    Debug.Log(string.Format("Empty at: ({0}, {1})", i, j));
+
+                    emptyColumn = j;
+
+                    MoveDotsDownByOne(i, j);
+
+                    // Move all elements in this column down by one
+                    /*for (int k = i; k >= 0; k--)
+                    {
+                        //dotGrid[k][emptyColumn].SetPosition(dotGrid[k + 1][emptyColumn].GetPosition());
+                        MoveDot(k, emptyColumn, k + 1, emptyColumn);
+                    }*/
+                }
+            }
+
+            // Spawn new Dot on top row
+        }
+    }
+
+    /// <summary>
+    /// Move dot from (i,j) to (u,v).
+    /// </summary>
+    /// <param name="i">Current column number</param>
+    /// <param name="j">Current row number</param>
+    /// <param name="u">Next column number</param>
+    /// <param name="v">Next row number</param>
+    public void MoveDot(int i, int j, int u, int v)
+    {
+        Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {3})", i, j, u, v));
+        //S_Dot temp = dotGrid[i][j]; // Dot to move
+        dotGrid[u][v].SetDot(dotGrid[i][j].GetDot()); // Copy over GameObject
+        dotGrid[u][v].SetColor(dotGrid[i][j].GetColor()); // Copy overcolor
+        dotGrid[u][v].SetOccupied(true); // Set occupation status
+        dotGrid[i][j].SetDot(new GameObject());
+        dotGrid[i][j].SetOccupied(false);
+    }
+
+    /// <summary>
+    /// Move dots in this colomn down by one element until row
+    /// </summary>
+    /// <param name="row">Row with an empty cell</param>
+    /// <param name="column">Column with an empty cell</param>
+    public void MoveDotsDownByOne(int row, int column)
+    {
+        for (int i = row; i > 0; i--)
+        {
+            Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {1})", i - 1, column, i));
+            //S_Dot temp = dotGrid[i][j]; // Dot to move
+
+            dotGrid[i][column].SetDot(dotGrid[i - 1][column].GetDot()); // Copy over GameObject
+            dotGrid[i][column].SetColor(dotGrid[i - 1][column].GetColor()); // Copy overcolor
+            dotGrid[i][column].SetOccupied(true); // Set occupation status
+            dotGrid[i - 1][column].SetDot(new GameObject());
+            dotGrid[i - 1][column].SetOccupied(false);
+        }
+    }
+
+
+    /// <summary>
+    /// Removes the dot GameObject at the given index
+    /// </summary>
+    /// <param name="i">Column number</param>
+    /// <param name="j">Row number</param>
+    public void RemoveDot(int i, int j)
+    {
+        Destroy(dotGrid[i][j].GetDot()); // Destory GameObject
+        dotGrid[i][j].SetOccupied(false); // Set occupation of cell to false
+    }
+
+    /// <summary>
+    /// Get dot at given index
+    /// </summary>
+    /// <param name="i">Row number</param>
+    /// <param name="j">Column number</param>
+    /// <returns>Returns dot at given location</returns>
     public S_Dot GetDot(int i, int j)
     {
         return dotGrid[i][j];
