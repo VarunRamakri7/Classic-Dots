@@ -21,16 +21,15 @@ public class S_GameManager : MonoBehaviour
     private void Update()
     {
         CheckMouseHit();
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            gridManager.RepopulateGrid();
-        }
+        CheckKeyPress();
     }
 
+    /// <summary>
+    /// Check Mouse right click
+    /// </summary>
     private void CheckMouseHit()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(1))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -56,6 +55,17 @@ public class S_GameManager : MonoBehaviour
                     gridManager.RemoveDot(index[0], index[1]); // Remove dot at location
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Check keyboard press
+    /// </summary>
+    public void CheckKeyPress()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            gridManager.RepopulateGrid();
         }
     }
 }
