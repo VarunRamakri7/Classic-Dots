@@ -166,7 +166,6 @@ public class S_DotGridManager : MonoBehaviour
     public void MoveDot(int i, int j, int u, int v)
     {
         //Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {3})", i, j, u, v));
-        //StartCoroutine(AnimateDot(dotGrid[u][v].GetDot(), dotGrid[i][j].GetPosition()));
 
         dotGrid[u][v].SetDot(dotGrid[i][j].GetDot()); // Copy over GameObject
         dotGrid[u][v].SetColor(dotGrid[i][j].GetColor()); // Copy overcolor
