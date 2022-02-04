@@ -60,9 +60,12 @@ public class S_Dot
     #region Getters and Setters
     public void SetDot(GameObject _dot)
     {
-        dot = _dot;
-        dot.transform.position = cellPos;
-        //MoveDotSlowly();
+        if (_dot != null)
+        {
+            dot = _dot;
+            dot.transform.position = cellPos;
+            //MoveDotSlowly();
+        }
     }
 
     public GameObject GetDot()
