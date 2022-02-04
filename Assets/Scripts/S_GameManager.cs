@@ -16,8 +16,6 @@ public class S_GameManager : MonoBehaviour
         {
             gameManager = this;
         }
-
-        gridManager.MakeGrid(); // Make dots grid
     }
 
     private void Update()
