@@ -91,28 +91,10 @@ public class S_DotGridManager : MonoBehaviour
         for (int i = row; i > 0; i--)
         {
             MoveDot(i - 1, column, i, column);
+            //StartCoroutine(AnimateDot(dotGrid[i - 1][column].GetDot(), dotGrid[i][column].GetPosition()));
         }
 
         RefillColumn(column);
-    }
-
-    /// <summary>
-    /// Move dot from (i,j) to (u,v).
-    /// </summary>
-    /// <param name="i">Current column number</param>
-    /// <param name="j">Current row number</param>
-    /// <param name="u">Next column number</param>
-    /// <param name="v">Next row number</param>
-    public void MoveDot(int i, int j, int u, int v)
-    {
-        //Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {3})", i, j, u, v));
-
-        dotGrid[u][v].SetDot(dotGrid[i][j].GetDot()); // Copy over GameObject
-        dotGrid[u][v].SetColor(dotGrid[i][j].GetColor()); // Copy overcolor
-        dotGrid[u][v].SetOccupied(true); // Set occupation status
-
-        dotGrid[i][j].SetDot(new GameObject());
-        dotGrid[i][j].SetOccupied(false);
     }
 
     /// <summary>
@@ -146,6 +128,7 @@ public class S_DotGridManager : MonoBehaviour
 
     }
 
+    #region Dot Related
     /// <summary>
     /// Removes the dot GameObject at the given index
     /// </summary>
@@ -153,10 +136,17 @@ public class S_DotGridManager : MonoBehaviour
     /// <param name="j">Row number</param>
     public void RemoveDot(int i, int j)
     {
+        //MakeDotsFall(i, j);
+
         Destroy(dotGrid[i][j].GetDot()); // Destory GameObject
         dotGrid[i][j].SetOccupied(false); // Set occupation of cell to false
     }
 
+    /// <summary>
+    /// Make a new dot at this position
+    /// </summary>
+    /// <param name="position">Position of this dot</param>
+    /// <returns></returns>
     public S_Dot MakeNewDot(Vector3 position)
     {
         GameObject dot = Instantiate(prefab, position, Quaternion.identity); // Instantiate the prefab
@@ -165,4 +155,61 @@ public class S_DotGridManager : MonoBehaviour
 
         return new S_Dot(dot, position, color, true);
     }
+
+    /// <summary>
+    /// Move dot from (i,j) to (u,v).
+    /// </summary>
+    /// <param name="i">Current column number</param>
+    /// <param name="j">Current row number</param>
+    /// <param name="u">Next column number</param>
+    /// <param name="v">Next row number</param>
+    public void MoveDot(int i, int j, int u, int v)
+    {
+        //Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {3})", i, j, u, v));
+        //StartCoroutine(AnimateDot(dotGrid[u][v].GetDot(), dotGrid[i][j].GetPosition()));
+
+        dotGrid[u][v].SetDot(dotGrid[i][j].GetDot()); // Copy over GameObject
+        dotGrid[u][v].SetColor(dotGrid[i][j].GetColor()); // Copy overcolor
+        dotGrid[u][v].SetOccupied(true); // Set occupation status
+
+        dotGrid[i][j].SetDot(new GameObject());
+        dotGrid[i][j].SetOccupied(false);
+    }
+
+    /// <summary>
+    /// Make all dots above (i,j) fall down by one place
+    /// </summary>
+    /// <param name="row">Empty cell row number</param>
+    /// <param name="column">Empty cell column number</param>
+    public void MakeDotsFall(int row, int column)
+    {
+        // Make dots in this column fall down to the empty cell
+        for (int i = row; i > 0; i--)
+        {
+            StartCoroutine(AnimateDot(dotGrid[i - 1][column].GetDot(), dotGrid[i][column].GetPosition())); // Make dot fall
+        }
+    }
+
+    /// <summary>
+    /// Animate the dot to move from it's current position to the destination
+    /// </summary>
+    /// <param name="dot">Dot to move</param>
+    /// <param name="destination">Destination position</param>
+    /// <returns></returns>
+    public IEnumerator AnimateDot(GameObject dot, Vector3 destination)
+    {
+        float totalMovementTime = 2.0f; // Total time of animation
+        float currentMovementTime = 0.0f; // Amount of time that has passed
+        Vector3 curPos = dot.transform.position;
+
+        while (Vector3.Distance(dot.transform.position, destination) > 0)
+        {
+            //Debug.Log("Animating");
+            currentMovementTime += Time.deltaTime;
+            dot.transform.position = Vector3.Lerp(curPos, destination, currentMovementTime / totalMovementTime);
+            yield return null;
+        }
+    }
+
+    #endregion
 }
