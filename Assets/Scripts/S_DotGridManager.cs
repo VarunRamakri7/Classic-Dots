@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class S_DotGridManager : MonoBehaviour
 {
@@ -63,6 +64,7 @@ public class S_DotGridManager : MonoBehaviour
     /// </summary>
     public void RepopulateGrid()
     {
+        // Iterate through matrix
         for (int i = 0; i < gridSize[0]; i++)
         {
             for (int j = 0; j < gridSize[1]; j++)
@@ -91,7 +93,28 @@ public class S_DotGridManager : MonoBehaviour
         for (int i = row; i > 0; i--)
         {
             MoveDot(i - 1, column, i, column);
-            //StartCoroutine(AnimateDot(dotGrid[i - 1][column].GetDot(), dotGrid[i][column].GetPosition()));
+        }
+
+        RefillColumn(column);
+    }
+
+    /// <summary>
+    /// Move dots in this column to lowest cell
+    /// </summary>
+    /// <param name="column">Column to check</param>
+    public void MoveDotsToLowest(int column)
+    {
+        // Iterate through column and move dots down to lowest
+        for (int i = gridSize[1] - 1; i >= 0; i--)
+        {
+            int row = GetLowestEmptyRowInColumn(column);
+            Debug.Log(string.Format("Lowest: ({0}, {1})", i, column));
+
+            // Check if current row is above lowest low
+            if (i > row)
+            {
+                MoveDot(i, column, row, column);
+            }
         }
 
         RefillColumn(column);
@@ -128,19 +151,43 @@ public class S_DotGridManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Get the lowest empty cell in the given column
+    /// </summary>
+    /// <param name="column">Column number to check</param>
+    /// <returns></returns>
+    public int GetLowestEmptyRowInColumn(int column)
+    {
+        int lowest = 0;
+
+        // Iterate through each row in the column
+        for (int i = 0; i < gridSize[0]; i++)
+        {
+            // Check occupation status
+            if (!dotGrid[i][column].IsOccupied())
+            {
+                lowest++; // Increment if it is unoccupied
+            }
+        }
+
+        //Debug.Log(string.Format("Lowest: ({0}, {1})", lowest, column));
+
+        return lowest;
+    }
+
     #region Dot Related
     /// <summary>
     /// Removes the dot GameObject at the given index
     /// </summary>
     /// <param name="i">Column number</param>
     /// <param name="j">Row number</param>
-    public void RemoveDot(int i, int j)
+    /*public void RemoveDot(int i, int j)
     {
-        //MakeDotsFall(i, j);
+        MakeDotsFall(i, j);
 
-        Destroy(dotGrid[i][j].GetDot()); // Destory GameObject
-        dotGrid[i][j].SetOccupied(false); // Set occupation of cell to false
-    }
+        //Destroy(dotGrid[i][j].GetDot()); // Destory GameObject
+        //dotGrid[i][j].SetOccupied(false); // Set occupation of cell to false    
+    }*/
 
     /// <summary>
     /// Make a new dot at this position
@@ -182,11 +229,17 @@ public class S_DotGridManager : MonoBehaviour
     /// <param name="column">Empty cell column number</param>
     public void MakeDotsFall(int row, int column)
     {
-        // Make dots in this column fall down to the empty cell
+        dotGrid[row][column].SetOccupied(false); // Set occupation of cell to false    
+
+        // Make dots in this column fall down to the lowest row
+        int lowest = GetLowestEmptyRowInColumn(column); // Get lowest index
         for (int i = row; i > 0; i--)
         {
-            StartCoroutine(AnimateDot(dotGrid[i - 1][column].GetDot(), dotGrid[i][column].GetPosition())); // Make dot fall
+            StartCoroutine(AnimateDot(dotGrid[i - 1][column].GetDot(), dotGrid[lowest][column].GetPosition())); // Make dot fall to lowest
+            lowest = i - 1; // Reset lowest
         }
+
+        Destroy(dotGrid[row][column].GetDot()); // Destroy gameobject at empty cell
     }
 
     /// <summary>
@@ -197,17 +250,32 @@ public class S_DotGridManager : MonoBehaviour
     /// <returns></returns>
     public IEnumerator AnimateDot(GameObject dot, Vector3 destination)
     {
-        float totalMovementTime = 2.0f; // Total time of animation
-        float currentMovementTime = 0.0f; // Amount of time that has passed
-        Vector3 curPos = dot.transform.position;
-
-        while (Vector3.Distance(dot.transform.position, destination) > 0)
+        if (dot != null) // Check if dot exists
         {
-            //Debug.Log("Animating");
-            currentMovementTime += Time.deltaTime;
-            dot.transform.position = Vector3.Lerp(curPos, destination, currentMovementTime / totalMovementTime);
-            yield return null;
+            float totalMovementTime = 2.0f; // Total time of animation
+            float currentMovementTime = 0.0f; // Amount of time that has passed
+            Vector3 curPos = dot.transform.position;
+
+            // Move dot to new location
+            while (dot != null && Vector3.Distance(dot.transform.position, destination) > 0.0f)
+            {
+                //Debug.Log("Animating");
+                currentMovementTime += Time.deltaTime;
+                dot.transform.position = Vector3.Lerp(curPos, destination, currentMovementTime / totalMovementTime);
+                yield return new WaitForSeconds(0.001f);
+            }
         }
+    }
+
+    /// <summary>
+    /// Get the dot at the given location
+    /// </summary>
+    /// <param name="row">Row number of dot to get</param>
+    /// <param name="column">Column number of dot to get</param>
+    /// <returns></returns>
+    public GameObject GetDotAt(int row, int column)
+    {
+        return dotGrid[row][column].GetDot();
     }
 
     #endregion
