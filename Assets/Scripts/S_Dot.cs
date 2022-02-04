@@ -7,6 +7,7 @@ public class S_Dot
     public enum DotColors { RED, GREEN, BLUE };
 
     private GameObject dot;
+    //private int[] index;
     private Vector3 cellPos;
     private bool isOccupied;
     private int color;
@@ -19,6 +20,7 @@ public class S_Dot
         dot = new GameObject();
         cellPos = new Vector3();
         isOccupied = false;
+        //index = new int[2]{ -1, -1};
         SetColor(1);
     }
 
@@ -29,24 +31,13 @@ public class S_Dot
     /// <param name="position"></param>
     /// <param name="_color"></param>
     /// <param name="status"></param>
-    public S_Dot(GameObject _dot, Vector3 position, int _color, bool status)
+    public S_Dot(GameObject _dot, /*int[] _index,*/ Vector3 position, int _color, bool status)
     {
         dot = _dot;
+        //index = _index;
         cellPos = position;
         isOccupied = status;
         SetColor(_color);
-    }
-
-    /// <summary>
-    /// Copy constructor
-    /// </summary>
-    /// <param name="nextDot"></param>
-    public S_Dot(S_Dot nextDot)
-    {
-        dot = nextDot.dot;
-        cellPos = nextDot.cellPos;
-        isOccupied = nextDot.isOccupied;
-        color = nextDot.color;
     }
 
     public void SetDotColor(Color _color)
@@ -58,17 +49,36 @@ public class S_Dot
         }
     }
 
+    public void MoveDotSlowly()
+    {
+        while (dot.transform.position.z < cellPos.z)
+        {
+            dot.transform.Translate(-Vector3.forward * 2.0f * Time.deltaTime);
+        }
+    }
+
     #region Getters and Setters
     public void SetDot(GameObject _dot)
     {
         dot = _dot;
         dot.transform.position = cellPos;
+        //MoveDotSlowly();
     }
 
     public GameObject GetDot()
     {
         return dot;
     }
+
+    /*public void SetIndex(int x, int y)
+    {
+        index = new int[2] { x, y };
+    }
+
+    public int[] GetIndex()
+    {
+        return index;
+    }*/
 
     public void SetPosition(Vector3 position)
     {
