@@ -7,7 +7,6 @@ public class S_Dot
     public enum DotColors { RED, GREEN, BLUE };
 
     private GameObject dot;
-    //private int[] index;
     private Vector3 cellPos;
     private bool isOccupied;
     private int color;
@@ -20,7 +19,6 @@ public class S_Dot
         dot = new GameObject();
         cellPos = new Vector3();
         isOccupied = false;
-        //index = new int[2]{ -1, -1};
         SetColor(1);
     }
 
@@ -72,16 +70,6 @@ public class S_Dot
     {
         return dot;
     }
-
-    /*public void SetIndex(int x, int y)
-    {
-        index = new int[2] { x, y };
-    }
-
-    public int[] GetIndex()
-    {
-        return index;
-    }*/
 
     public void SetPosition(Vector3 position)
     {
