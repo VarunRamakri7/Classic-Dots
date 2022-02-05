@@ -12,7 +12,9 @@ public class S_GameManager : MonoBehaviour
     private S_ConnectDots connectionManager;
 
     private char[] trimChar = { 'd', 'o', 't', '(', ')' };
+    private Camera mainCamera;
     private List<int[]> dotsIndices;
+    private string lastDotName;
     private bool squareMade;
 
     // Start is called before the first frame update
@@ -23,7 +25,9 @@ public class S_GameManager : MonoBehaviour
             gameManager = this;
         }
 
-        dotsIndices = new List<int[]>();
+        mainCamera = Camera.main; // Get main camera
+        dotsIndices = new List<int[]>(); // Initialize array of indices
+        lastDotName = "";
         squareMade = false;
     }
 
@@ -32,7 +36,8 @@ public class S_GameManager : MonoBehaviour
         CheckKeyPress();
 
         CheckMousePress();
-        //CheckMouseHold();
+        CheckMouseHold();
+        CheckMouseRelease();
     }
 
     /// <summary>
@@ -42,7 +47,7 @@ public class S_GameManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit))
@@ -51,33 +56,19 @@ public class S_GameManager : MonoBehaviour
                 if (hit.transform.gameObject.tag == "dot")
                 {
                     //Debug.Log("Hit: " + hit.transform.gameObject.name);
-
-                    // Get index of dot
-                    string dotName = hit.transform.gameObject.name;
-                    //Debug.Log("Name: " + dotName);
-
-                    string trimmed = dotName.Trim(trimChar); // Remove all extra chars except ','
-                    //Debug.Log("After trim: " + trimmed);
-
-                    int[] index = { (int)char.GetNumericValue(trimmed[0]), (int)char.GetNumericValue(trimmed[2]) }; // Get numeric value from chars
-                    //Debug.Log("Index: (" + index[0] + ", " + index[1] + ")");
-
-                    // TODO: Check color of new dot
-
+                    
                     // Add unique indices
+                    int[] index = GetIndexOfDot(hit.transform.gameObject.name);
                     if (!dotsIndices.Contains(index))
                     {
-                        //Debug.Log(string.Format("Adding: ({0}, {1})", index[0], index[1]));
                         dotsIndices.Add(index); // Add dot index to list
+                        lastDotName = hit.transform.gameObject.name;
                     }
-                    // TODO: Checkk if square is made
-
                     connectionManager.SetLineColor(hit.transform.gameObject.GetComponent<Renderer>().material.color); // Change line color
 
                     // Add position to line
                     Vector3 point = hit.transform.position;
-                    point.y = 0.2f;
-                    connectionManager.AddPoint(point);
+                    connectionManager.AddPoint(point); // Draw line
                 }
             }
         }
@@ -88,10 +79,53 @@ public class S_GameManager : MonoBehaviour
     /// </summary>
     public void CheckMouseHold()
     {
+        Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition); // Get mouse position
+
         if (Input.GetMouseButton(0))
         {
-            // Change last position to mouse position
-            connectionManager.SetPoint(connectionManager.GetLength(), Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            // Add mouse position to line if this is the first press
+            if (connectionManager.GetLength() == 1)
+            {
+                connectionManager.AddPoint(mousePos); // Add mouse position as new point
+            }
+
+            connectionManager.SetPoint(dotsIndices.Count, mousePos); // Change end position to mouse position
+
+            // Check if line hits another dot
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                // Check if a dot is hit
+                if (hit.transform.gameObject.tag == "dot")
+                {
+                    Debug.Log("Drag Hit: " + hit.transform.gameObject.name);
+
+                    // Compare colors of dots
+                    Color hitDotColor = hit.transform.gameObject.GetComponent<Renderer>().material.color; // Get color of new dot
+                    Color lineColor = gridManager.GetDotColor(dotsIndices[0][0], dotsIndices[0][1]); // Get color of first dot
+                    if (lineColor.Equals(hitDotColor) && lastDotName != hit.transform.gameObject.name)
+                    {
+                        Debug.Log("Same Drag Hit Color");
+
+                        // Add unique indices
+                        int[] index = GetIndexOfDot(hit.transform.gameObject.name);
+                        if (!dotsIndices.Contains(index))
+                        {
+                            //Debug.Log(string.Format("Adding: ({0}, {1})", index[0], index[1]));
+                            dotsIndices.Add(index); // Add dot index to list
+                            lastDotName = hit.transform.gameObject.name; // Update last dot name
+                        }
+
+                        connectionManager.SetPoint(dotsIndices.Count, hit.transform.position); // Set last point as new dot
+
+                        connectionManager.AddPoint(mousePos); // Add mouse position to line
+
+                        //connectionManager.AddPoint(hit.transform.position); // Add new dot to line
+                    }
+                }
+            }
         }
     }
 
@@ -102,7 +136,10 @@ public class S_GameManager : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
-            // Destroy dots added to list and erase line
+            // TODO: Destroy dots added to list and erase line
+
+            connectionManager.EmptyLine(); // Erase Line
+            dotsIndices = new List<int[]>(); // Empty dots indices
         }
     }
 
@@ -114,14 +151,17 @@ public class S_GameManager : MonoBehaviour
         // Destroy dots
         if(Input.GetKeyDown(KeyCode.D))
         {
-            connectionManager.EmptyLine(); // Erase line
-
-            // Iterate through indices and remove all connected dots
-            for(int i = 0; i < dotsIndices.Count; i++)
+            if (dotsIndices.Count > 1)
             {
-                gridManager.RemoveDot(dotsIndices[i][0], dotsIndices[i][1]); // Remove all dots
+                connectionManager.EmptyLine(); // Erase line
+
+                // Iterate through indices and remove all connected dots
+                for (int i = 0; i < dotsIndices.Count; i++)
+                {
+                    gridManager.RemoveDot(dotsIndices[i][0], dotsIndices[i][1]); // Remove all dots
+                }
+                dotsIndices = new List<int[]>(); // Reset list
             }
-            dotsIndices = new List<int[]>(); // Reset list
         }
 
         // Spawn new dots
@@ -129,5 +169,16 @@ public class S_GameManager : MonoBehaviour
         {
             gridManager.RepopulateGrid();
         }
+    }
+
+    public int[] GetIndexOfDot(string dotName)
+    {
+        string trimmed = dotName.Trim(trimChar); // Remove all extra chars except ','
+        // Debug.Log("After trim: " + trimmed);
+
+        int[] index = { (int)char.GetNumericValue(trimmed[0]), (int)char.GetNumericValue(trimmed[2]) }; // Get numeric value from chars
+        // Debug.Log("Index: (" + index[0] + ", " + index[1] + ")");
+
+        return index;
     }
 }
