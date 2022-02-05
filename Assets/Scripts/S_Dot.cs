@@ -42,7 +42,7 @@ public class S_Dot
 
     public void SetDotColor(Color _color)
     {
-        if (dot.GetComponent<Renderer>() != null)
+        if (dot != null && dot.GetComponent<Renderer>() != null)
         {
             //Debug.Log("Setting color: " + (DotColors)color);
             dot.GetComponent<Renderer>().material.color = _color;
