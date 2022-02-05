@@ -64,9 +64,9 @@ public class S_GameManager : MonoBehaviour
                         dotsIndices.Add(index); // Add dot index to list
                         lastDotName = hit.transform.gameObject.name;
                     }
-                    connectionManager.SetLineColor(hit.transform.gameObject.GetComponent<Renderer>().material.color); // Change line color
 
-                    connectionManager.AddPoint(hit.transform.gameObject.transform.position); // Add position of GameObject to line
+                    connectionManager.SetLineColor(hit.transform.gameObject.GetComponent<Renderer>().material.color); // Change line color
+                    connectionManager.AddPoint(gridManager.GetDotAt(index[0], index[1]).transform.position); // Add position of GameObject to line
                 }
             }
         }
@@ -120,7 +120,7 @@ public class S_GameManager : MonoBehaviour
                                 lastDotName = hit.transform.gameObject.name; // Update last dot name
                             }
 
-                            connectionManager.SetPoint(dotsIndices.Count, hit.transform.gameObject.transform.position); // Set last point as new dot
+                            connectionManager.SetPoint(dotsIndices.Count, gridManager.GetDotAt(index[0], index[1]).transform.position); // Set last point as new dot
 
                             connectionManager.AddPoint(mousePos); // Add mouse position to line
                         }
