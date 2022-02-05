@@ -26,6 +26,7 @@ public class S_ConnectDots : MonoBehaviour
         lineRenderer.startWidth = 0.5f;
         lineRenderer.endWidth = 0.5f;
         lineRenderer.useWorldSpace = true;
+        lineRenderer.enabled = false; // Disable line renderer
 
         positions = new List<Vector3>();
     }
@@ -37,6 +38,7 @@ public class S_ConnectDots : MonoBehaviour
     {
         lineRenderer.positionCount = positions.Count; // Set position count
         lineRenderer.SetPositions(positions.ToArray()); // Set positions
+        lineRenderer.enabled = true;
     }
 
     /// <summary>
@@ -45,10 +47,9 @@ public class S_ConnectDots : MonoBehaviour
     /// <param name="point">Point to add to Line</param>
     public void AddPoint(Vector3 point)
     {
-        // Add positions for line
-        positions.Add(point);
-
-        DrawLine();
+        point.y = 0.2f; // Flatten point
+        positions.Add(point); // Add new position to list
+        DrawLine(); // Draw line
     }
 
     /// <summary>
@@ -58,7 +59,13 @@ public class S_ConnectDots : MonoBehaviour
     /// <param name="point">New position</param>
     public void SetPoint(int index, Vector3 point)
     {
-        positions[index] = point;
+        if (index < positions.Count)
+        {
+            point.y = 0.2f; // Flatten point
+            positions[index] = point;
+
+            DrawLine();
+        }
     }
 
     /// <summary>
@@ -82,8 +89,9 @@ public class S_ConnectDots : MonoBehaviour
 
     public void EmptyLine()
     {
-        positions = new List<Vector3>();
-        lineRenderer.positionCount = 0; // Set position count to 0
+        lineRenderer.enabled = false;
+        positions = new List<Vector3>(); // Reset positions
+        //lineRenderer.positionCount = 0; // Set position count to 0
     }
 
     /// <summary>
@@ -94,5 +102,14 @@ public class S_ConnectDots : MonoBehaviour
     {
         lineRenderer.startColor = color;
         lineRenderer.endColor = color;
+    }
+
+    /// <summary>
+    /// Return color of line
+    /// </summary>
+    /// <returns>Color of line</returns>
+    public Color GetLineColor()
+    {
+        return lineRenderer.endColor;
     }
 }
