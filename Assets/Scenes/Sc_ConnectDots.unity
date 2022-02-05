@@ -206,7 +206,9 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions: []
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -214,8 +216,8 @@ LineRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0
-        value: 1
+        time: 0.021976471
+        value: 0.50704193
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -554,8 +556,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 8221352031158747238, guid: 65c6d809d4249c54786e756428800674, type: 3}
   gridParent: {fileID: 2027862556}
-  startPos: {x: -4, y: 0, z: -4}
-  gridSize: 0600000006000000
+  startPos: {x: -1, y: 0, z: -1}
+  gridSize: 0200000002000000
   offset: 1.5
 --- !u!4 &2134527030
 Transform:
