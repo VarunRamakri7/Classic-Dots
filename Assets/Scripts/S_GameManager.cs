@@ -63,10 +63,10 @@ public class S_GameManager : MonoBehaviour
                     {
                         dotsIndices.Add(index); // Add dot index to list
                         lastDotName = hit.transform.gameObject.name;
-                    }
 
-                    connectionManager.SetLineColor(hit.transform.gameObject.GetComponent<Renderer>().material.color); // Change line color
-                    connectionManager.AddPoint(gridManager.GetDotAt(index[0], index[1]).transform.position); // Add position of GameObject to line
+                        connectionManager.SetLineColor(hit.transform.gameObject.GetComponent<Renderer>().material.color); // Change line color
+                        connectionManager.AddPoint(gridManager.GetDotAt(index[0], index[1]).transform.position); // Add position of GameObject to line
+                    }
                 }
             }
         }
@@ -109,19 +109,20 @@ public class S_GameManager : MonoBehaviour
 
                         // Add unique indices
                         int[] index = GetIndexOfDot(hit.transform.gameObject.name);
-                        if (CanConnectToCurrentDot(index)) // Check if new dot can connect to new dot
+                        if (!dotsIndices.Contains(index) && CanConnectToCurrentDot(index)) // Check if new dot can connect to new dot
                         {
+                            // TODO: Fix line connecting to same dot
+
                             Debug.Log("Can connect");
 
-                            if (!dotsIndices.Contains(index))
-                            {
+                            //if (!dotsIndices.Contains(index))
+                            //{
                                 //Debug.Log(string.Format("Adding: ({0}, {1})", index[0], index[1]));
                                 dotsIndices.Add(index); // Add dot index to list
                                 lastDotName = hit.transform.gameObject.name; // Update last dot name
-                            }
+                            //}
 
-                            connectionManager.SetPoint(dotsIndices.Count, gridManager.GetDotAt(index[0], index[1]).transform.position); // Set last point as new dot
-
+                            connectionManager.SetPoint(dotsIndices.Count, gridManager.GetDotAt(index[0], index[1]).transform.position); // Set new dot as last point
                             connectionManager.AddPoint(mousePos); // Add mouse position to line
                         }
                     }
@@ -137,10 +138,11 @@ public class S_GameManager : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
-            // TODO: Destroy dots added to list and erase line
-
             connectionManager.EmptyLine(); // Erase Line
+            
+            // TODO: Destroy dots added to list
             dotsIndices = new List<int[]>(); // Empty dots indices
+            
         }
     }
 
@@ -204,7 +206,7 @@ public class S_GameManager : MonoBehaviour
             (index[0] == (currentIndex[0])) && (index[1] == currentIndex[1] - 1) || // Left
             (index[0] == (currentIndex[0])) && (index[1] == currentIndex[1] + 1)) // Right
         {
-            //Debug.Log("Can Connect");
+            Debug.Log("Can Connect");
             canConnect = true;
         }
 
