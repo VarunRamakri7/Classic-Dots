@@ -66,9 +66,7 @@ public class S_GameManager : MonoBehaviour
                     }
                     connectionManager.SetLineColor(hit.transform.gameObject.GetComponent<Renderer>().material.color); // Change line color
 
-                    // Add position to line
-                    Vector3 point = hit.transform.position;
-                    connectionManager.AddPoint(point); // Draw line
+                    connectionManager.AddPoint(hit.transform.gameObject.transform.position); // Add position of GameObject to line
                 }
             }
         }
@@ -100,29 +98,32 @@ public class S_GameManager : MonoBehaviour
                 // Check if a dot is hit
                 if (hit.transform.gameObject.tag == "dot")
                 {
-                    Debug.Log("Drag Hit: " + hit.transform.gameObject.name);
+                    // Debug.Log("Drag Hit: " + hit.transform.gameObject.name);
 
                     // Compare colors of dots
                     Color hitDotColor = hit.transform.gameObject.GetComponent<Renderer>().material.color; // Get color of new dot
                     Color lineColor = gridManager.GetDotColor(dotsIndices[0][0], dotsIndices[0][1]); // Get color of first dot
                     if (lineColor.Equals(hitDotColor) && lastDotName != hit.transform.gameObject.name)
                     {
-                        Debug.Log("Same Drag Hit Color");
+                        Debug.Log("Same Color");
 
                         // Add unique indices
                         int[] index = GetIndexOfDot(hit.transform.gameObject.name);
-                        if (!dotsIndices.Contains(index))
+                        if (CanConnectToCurrentDot(index)) // Check if new dot can connect to new dot
                         {
-                            //Debug.Log(string.Format("Adding: ({0}, {1})", index[0], index[1]));
-                            dotsIndices.Add(index); // Add dot index to list
-                            lastDotName = hit.transform.gameObject.name; // Update last dot name
+                            Debug.Log("Can connect");
+
+                            if (!dotsIndices.Contains(index))
+                            {
+                                //Debug.Log(string.Format("Adding: ({0}, {1})", index[0], index[1]));
+                                dotsIndices.Add(index); // Add dot index to list
+                                lastDotName = hit.transform.gameObject.name; // Update last dot name
+                            }
+
+                            connectionManager.SetPoint(dotsIndices.Count, hit.transform.gameObject.transform.position); // Set last point as new dot
+
+                            connectionManager.AddPoint(mousePos); // Add mouse position to line
                         }
-
-                        connectionManager.SetPoint(dotsIndices.Count, hit.transform.position); // Set last point as new dot
-
-                        connectionManager.AddPoint(mousePos); // Add mouse position to line
-
-                        //connectionManager.AddPoint(hit.transform.position); // Add new dot to line
                     }
                 }
             }
@@ -171,6 +172,11 @@ public class S_GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Get index of the dot from its name
+    /// </summary>
+    /// <param name="dotName">Name of dot</param>
+    /// <returns>Index of dot</returns>
     public int[] GetIndexOfDot(string dotName)
     {
         string trimmed = dotName.Trim(trimChar); // Remove all extra chars except ','
@@ -180,5 +186,28 @@ public class S_GameManager : MonoBehaviour
         // Debug.Log("Index: (" + index[0] + ", " + index[1] + ")");
 
         return index;
+    }
+
+    /// <summary>
+    /// Check if the new dot is above, below, or beside the current dot
+    /// </summary>
+    /// <param name="index">Index of new dot</param>
+    /// <returns>True if the new dot is in a valid position</returns>
+    public bool CanConnectToCurrentDot(int[] index)
+    {
+        bool canConnect = false;
+
+        int[] currentIndex = dotsIndices[dotsIndices.Count - 1];
+
+        if ((index[0] == (currentIndex[0] - 1)) && (index[1] == currentIndex[1]) || // Above
+            (index[0] == (currentIndex[0] + 1)) && (index[1] == currentIndex[1]) || // Below
+            (index[0] == (currentIndex[0])) && (index[1] == currentIndex[1] - 1) || // Left
+            (index[0] == (currentIndex[0])) && (index[1] == currentIndex[1] + 1)) // Right
+        {
+            //Debug.Log("Can Connect");
+            canConnect = true;
+        }
+
+        return canConnect;
     }
 }
