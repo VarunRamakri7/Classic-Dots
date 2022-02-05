@@ -556,8 +556,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 8221352031158747238, guid: 65c6d809d4249c54786e756428800674, type: 3}
   gridParent: {fileID: 2027862556}
-  startPos: {x: -1, y: 0, z: -1}
-  gridSize: 0200000002000000
+  startPos: {x: -4, y: 0, z: -4}
+  gridSize: 0600000006000000
   offset: 1.5
 --- !u!4 &2134527030
 Transform:
