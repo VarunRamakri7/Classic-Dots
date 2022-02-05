@@ -13,6 +13,7 @@ public class S_GameManager : MonoBehaviour
 
     private char[] trimChar = { 'd', 'o', 't', '(', ')' };
     private List<int[]> dotsIndices;
+    private bool squareMade;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,7 @@ public class S_GameManager : MonoBehaviour
         }
 
         dotsIndices = new List<int[]>();
+        squareMade = false;
     }
 
     private void Update()
@@ -60,16 +62,15 @@ public class S_GameManager : MonoBehaviour
                     int[] index = { (int)char.GetNumericValue(trimmed[0]), (int)char.GetNumericValue(trimmed[2]) }; // Get numeric value from chars
                     //Debug.Log("Index: (" + index[0] + ", " + index[1] + ")");
 
-                    //gridManager.RemoveDot(index[0], index[1]); // Remove dot at location
-
                     // TODO: Check color of new dot
 
                     // Add unique indices
                     if (!dotsIndices.Contains(index))
                     {
-                        Debug.Log(string.Format("Adding: ({0}, {1})", index[0], index[1]));
+                        //Debug.Log(string.Format("Adding: ({0}, {1})", index[0], index[1]));
                         dotsIndices.Add(index); // Add dot index to list
                     }
+                    // TODO: Checkk if square is made
 
                     connectionManager.SetLineColor(hit.transform.gameObject.GetComponent<Renderer>().material.color); // Change line color
 
@@ -110,11 +111,7 @@ public class S_GameManager : MonoBehaviour
     /// </summary>
     public void CheckKeyPress()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            gridManager.RepopulateGrid();
-        }
-        
+        // Destroy dots
         if(Input.GetKeyDown(KeyCode.D))
         {
             connectionManager.EmptyLine(); // Erase line
@@ -122,12 +119,15 @@ public class S_GameManager : MonoBehaviour
             // Iterate through indices and remove all connected dots
             for(int i = 0; i < dotsIndices.Count; i++)
             {
-                Debug.Log(string.Format("Removing: ({0}, {1})", dotsIndices[i][0], dotsIndices[i][1]));
-                gridManager.MakeDotsFall(dotsIndices[i][0], dotsIndices[i][1]); // Remove dot
+                gridManager.RemoveDot(dotsIndices[i][0], dotsIndices[i][1]); // Remove all dots
             }
             dotsIndices = new List<int[]>(); // Reset list
+        }
 
-            //gridManager.RepopulateGrid();
+        // Spawn new dots
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            gridManager.RepopulateGrid();
         }
     }
 }
