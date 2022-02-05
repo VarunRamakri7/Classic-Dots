@@ -281,5 +281,16 @@ public class S_DotGridManager : MonoBehaviour
         return dotGrid[row][column].GetDot();
     }
 
+    /// <summary>
+    /// Get the color of the dot at the given index
+    /// </summary>
+    /// <param name="row">Row of dot</param>
+    /// <param name="column">Column of dot</param>
+    /// <returns></returns>
+    public Color GetDotColor(int row, int column)
+    {
+        return GetDotAt(row, column).GetComponent<Renderer>().material.color;
+    }
+
     #endregion
 }
