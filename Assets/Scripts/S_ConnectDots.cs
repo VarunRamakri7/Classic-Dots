@@ -23,8 +23,8 @@ public class S_ConnectDots : MonoBehaviour
 
         // Get line renderer and set defaults
         lineRenderer = this.gameObject.GetComponent<LineRenderer>(); // Add line renderer to GameObject
-        lineRenderer.startWidth = 0.5f;
-        lineRenderer.endWidth = 0.5f;
+        lineRenderer.startWidth = 0.25f;
+        lineRenderer.endWidth = 0.25f;
         lineRenderer.useWorldSpace = true;
         lineRenderer.enabled = false; // Disable line renderer
 
@@ -47,9 +47,12 @@ public class S_ConnectDots : MonoBehaviour
     /// <param name="point">Point to add to Line</param>
     public void AddPoint(Vector3 point)
     {
-        point.y = 0.2f; // Flatten point
-        positions.Add(point); // Add new position to list
-        DrawLine(); // Draw line
+        if (!positions.Contains(point))
+        {
+            point.y = 0.2f; // Flatten point
+            positions.Add(point); // Add new position to list
+            DrawLine(); // Draw line
+        }
     }
 
     /// <summary>
