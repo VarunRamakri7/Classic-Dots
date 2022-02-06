@@ -277,7 +277,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1712439084
 Transform:
   m_ObjectHideFlags: 0
@@ -735,9 +735,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 8221352031158747238, guid: 65c6d809d4249c54786e756428800674, type: 3}
   gridParent: {fileID: 1887590922}
-  startPos: {x: -12, y: 0, z: -5}
+  startPos: {x: -12, y: 0, z: -4}
   gridSize: 0c00000006000000
-  offset: 2
+  offset: 1.5
 --- !u!4 &2089021576
 Transform:
   m_ObjectHideFlags: 0
