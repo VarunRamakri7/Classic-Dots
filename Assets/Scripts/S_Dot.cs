@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class S_Dot
 {
     public enum DotColors { RED, GREEN, BLUE };
+
+    private float speed = 1.5f;
 
     private GameObject dot;
     private Vector3 cellPos;
@@ -46,13 +49,28 @@ public class S_Dot
         }
     }
 
-    public void MoveDotSlowly()
+    public void MoveDotToNextPosition()
     {
-        while (dot.transform.position.z < cellPos.z)
+        if (Vector3.Distance(dot.transform.position, nextPos) > 0.01)
         {
-            dot.transform.Translate(-Vector3.forward * 2.0f * Time.deltaTime);
+            dot.transform.position = Vector3.Lerp(dot.transform.position, nextPos, Time.fixedDeltaTime * speed);
         }
+        
+        //cellPos = nextPos; // Reset position
     }
+
+    public IEnumerator MoveDotToNextPosition(float _speed)
+    {
+        if (Vector3.Distance(dot.transform.position, nextPos) > 0.01)
+        {
+            dot.transform.position = Vector3.Lerp(dot.transform.position, nextPos, Time.fixedDeltaTime * _speed);
+        }
+
+        cellPos = nextPos; // Reset position
+
+        yield return new WaitForSeconds(1.0f);
+    }
+
 
     #region Getters and Setters
     public void SetDot(GameObject _dot)

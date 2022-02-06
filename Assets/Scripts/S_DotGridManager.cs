@@ -56,7 +56,7 @@ public class S_DotGridManager : MonoBehaviour
                 // Set next position for previous dot
                 if (i > 0 && j > 0)
                 {
-                    dotGrid[i - 1][j - 1].SetNextPosition(position);
+                    dotGrid[i - 1][j - 1].SetNextPosition(dotGrid[i][j].GetPosition());
                 }
             }
         }
@@ -86,7 +86,8 @@ public class S_DotGridManager : MonoBehaviour
         // Iterate through column and move dots down by one
         for (int i = row; i > 0; i--)
         {
-            MoveDot(i - 1, column, i, column);
+            //MoveDot(i - 1, column, i, column);
+            MoveDot(i, column);
         }
 
         RefillColumn(column);
@@ -107,7 +108,8 @@ public class S_DotGridManager : MonoBehaviour
                 if (lowest > 0 && i < gridSize[0])
                 {
                     Debug.Log(string.Format("Moving in Column {0}", j));
-                    MoveDot(i, j, lowest, j/*, i, j*/); // Move dot
+                    //MoveDot(i, j, lowest, j/*, i, j*/); // Move dot
+                    MoveDot(i, j);
                     //lowest = i; // Move lowest cell up
                 }
             }
@@ -221,6 +223,8 @@ public class S_DotGridManager : MonoBehaviour
         dotGrid[i][j].SetOccupied(false); // Set occupation of cell to false    
         Destroy(dotGrid[i][j].GetDot()); // Destory GameObject
 
+        //MoveDotsDownByOne(i, j);
+
         //Debug.Log(string.Format("Removed: ({0}, {1})", i, j));
     }
 
@@ -261,6 +265,17 @@ public class S_DotGridManager : MonoBehaviour
             dotGrid[i][j].SetDot(new GameObject());
             dotGrid[i][j].SetOccupied(false);
         }
+    }
+
+    /// <summary>
+    /// Move this dot to its next position
+    /// </summary>
+    /// <param name="i">Row number of dot</param>
+    /// <param name="j">Column nummber of dot</param>
+    public void MoveDot(int i, int j)
+    {
+        dotGrid[i][j].MoveDotToNextPosition();
+        //dotGrid[i][j].SetPosition(dotGrid[i][j].GetNextPosition());
     }
 
     /// <summary>
