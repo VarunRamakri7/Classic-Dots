@@ -32,7 +32,6 @@ public class S_Dot
     public S_Dot(GameObject _dot, /*int[] _index,*/ Vector3 position, int _color, bool status)
     {
         dot = _dot;
-        //index = _index;
         cellPos = position;
         isOccupied = status;
         SetColor(_color);
@@ -62,7 +61,6 @@ public class S_Dot
         {
             dot = _dot;
             dot.transform.position = cellPos;
-            //MoveDotSlowly();
         }
     }
 
