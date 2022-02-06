@@ -136,11 +136,23 @@ public class S_GameManager : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             connectionManager.EmptyLine(); // Erase Line
-            
-            // TODO: Destroy dots added to list
-            dotsIndices = new List<int[]>(); // Empty dots indices
-            dotNames = new List<string>(); // Empty names
-            
+
+            // Destroy dots added to list
+            if (dotNames.Count > 1)
+            {
+                Debug.Log("Removing dots");
+
+                // Iterate through indices and remove all connected dots in reverse order
+                for (int i = dotsIndices.Count - 1; i >= 0; i--)
+                {
+                    gridManager.RemoveDot(dotsIndices[i][0], dotsIndices[i][1]); // Remove all dots
+                    gridManager.RefillColumn(dotsIndices[i][1]); // Refill column with empty dot
+                }
+                gridManager.RepopulateGrid(); // Spawn new dots
+
+                dotsIndices = new List<int[]>(); // Empty dots indices
+                dotNames = new List<string>(); // Empty names
+            }
         }
     }
 
