@@ -154,7 +154,7 @@ public class S_GameManager : MonoBehaviour
                 {
                     gridManager.RemoveDot(dotsIndices[i][0], dotsIndices[i][1]); // Remove all dots
                 }
-                //gridManager.RepopulateGrid(); // Spawn new dots
+                gridManager.RepopulateGrid(); // Spawn new dots
             }
 
             dotsIndices = new List<int[]>(); // Empty dots indices

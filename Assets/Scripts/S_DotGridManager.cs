@@ -71,9 +71,11 @@ public class S_DotGridManager : MonoBehaviour
     {
         //Debug.Log("Repopulating grid");
 
+        // TODO: Make dots fall to make up for space
+
         MakeDotsInAllColumnsFallToLowest();
         //RefillAllColumns();
-        //RenameGrid();
+        RenameGrid();
     }
 
     /// <summary>
@@ -107,9 +109,9 @@ public class S_DotGridManager : MonoBehaviour
                 int lowest = GetLowestEmptyRowInColumn(j); // Get the lowest empty cell
                 if (lowest > 0 && i < gridSize[0])
                 {
-                    Debug.Log(string.Format("Moving in Column {0}", j));
-                    //MoveDot(i, j, lowest, j/*, i, j*/); // Move dot
-                    MoveDot(i, j);
+                    //Debug.Log(string.Format("Moving in Column {0}", j));
+                    MoveDot(i, j, lowest, j/*, i, j*/); // Move dot
+                    //MoveDot(i, j);
                     //lowest = i; // Move lowest cell up
                 }
             }
