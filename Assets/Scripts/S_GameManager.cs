@@ -105,7 +105,7 @@ public class S_GameManager : MonoBehaviour
                     Color lineColor = gridManager.GetDotColor(dotsIndices[0][0], dotsIndices[0][1]); // Get color of first dot
                     if (lineColor.Equals(hitDotColor) && lastDotName != hit.transform.gameObject.name)
                     {
-                        Debug.Log("Same Color");
+                        //Debug.Log("Same Color");
 
                         // Add unique indices
                         int[] index = GetIndexOfDot(hit.transform.gameObject.name);
@@ -113,16 +113,12 @@ public class S_GameManager : MonoBehaviour
                         {
                             // TODO: Fix line connecting to same dot
 
-                            Debug.Log("Can connect");
+                            //Debug.Log("Can connect");
+                            dotsIndices.Add(index); // Add dot index to list
+                            lastDotName = hit.transform.gameObject.name; // Update last dot name
 
-                            //if (!dotsIndices.Contains(index))
-                            //{
-                                //Debug.Log(string.Format("Adding: ({0}, {1})", index[0], index[1]));
-                                dotsIndices.Add(index); // Add dot index to list
-                                lastDotName = hit.transform.gameObject.name; // Update last dot name
-                            //}
-
-                            connectionManager.SetPoint(dotsIndices.Count, gridManager.GetDotAt(index[0], index[1]).transform.position); // Set new dot as last point
+                            //Debug.Log(string.Format("Setting last pos: ({0}, {1})", gridManager.GetDotAt(index[0], index[1]).transform.position.x, gridManager.GetDotAt(index[0], index[1]).transform.position.z));
+                            connectionManager.SetPoint(dotsIndices.Count - 1, gridManager.GetDotAt(index[0], index[1]).transform.position); // Set new dot as last point
                             connectionManager.AddPoint(mousePos); // Add mouse position to line
                         }
                     }
@@ -206,7 +202,7 @@ public class S_GameManager : MonoBehaviour
             (index[0] == (currentIndex[0])) && (index[1] == currentIndex[1] - 1) || // Left
             (index[0] == (currentIndex[0])) && (index[1] == currentIndex[1] + 1)) // Right
         {
-            Debug.Log("Can Connect");
+            //Debug.Log("Can Connect");
             canConnect = true;
         }
 
