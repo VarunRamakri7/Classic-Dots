@@ -58,9 +58,10 @@ public class S_GameManager : MonoBehaviour
 
                     // Add unique indices
                     int[] index = gridManager.GetIndexOfDot(hit.transform.gameObject.name);
+                    //Debug.Log(string.Format("Index: ({0}, {1})", index[0], index[1]));
+
                     dotsIndices.Add(index); // Add dot index to list
                     dotNames.Add(hit.transform.gameObject.name); // Add name to list
-                    //PrintIndices();
 
                     connectionManager.SetLineColor(hit.transform.gameObject.GetComponent<Renderer>().material.color); // Change line color
                     connectionManager.AddPoint(gridManager.GetDotAt(index[0], index[1]).transform.position); // Add position of GameObject to line
@@ -115,11 +116,10 @@ public class S_GameManager : MonoBehaviour
                             dotsIndices.Add(index); // Add dot index to list
                             dotNames.Add(hit.transform.gameObject.name); // Add name to list
 
-                            //Debug.Log(string.Format("Setting last pos: ({0}, {1})", gridManager.GetDotAt(index[0], index[1]).transform.position.x, gridManager.GetDotAt(index[0], index[1]).transform.position.z));
                             connectionManager.SetPoint(dotsIndices.Count - 1, gridManager.GetDotAt(index[0], index[1]).transform.position); // Set new dot as last point
                             connectionManager.AddPoint(mousePos); // Add mouse position to line
 
-                            squareMade = (dotNames.Count == 5 && dotNames[dotNames.Count - 1].Equals(dotNames[0])); // Check if a square has been made
+                            squareMade = (dotNames.Count > 4 && dotNames[dotNames.Count - 1].Equals(dotNames[0])); // Check if a square has been made
                         }
                     }
                 }
@@ -137,21 +137,29 @@ public class S_GameManager : MonoBehaviour
             connectionManager.EmptyLine(); // Erase Line
 
             // Destroy dots added to list
-            if (dotNames.Count > 1)
+            if (dotsIndices.Count > 1)
             {
-                Debug.Log("Removing dots");
+                //Debug.Log("Removing dots");
+
+                // Remove last element from lists if square is made
+                if (squareMade)
+                {
+                    dotsIndices.RemoveAt(dotsIndices.Count - 1);
+                    dotNames.RemoveAt(dotNames.Count - 1);
+                }
 
                 // Iterate through indices and remove all connected dots in reverse order
-                for (int i = dotsIndices.Count - 1; i >= 0; i--)
+                for (int i = 0; i < dotsIndices.Count; i++)
                 {
                     gridManager.RemoveDot(dotsIndices[i][0], dotsIndices[i][1]); // Remove all dots
-                    gridManager.RefillColumn(dotsIndices[i][1]); // Refill column with empty dot
+                    //gridManager.RefillColumn(dotsIndices[i][1]); // Refill column with empty dot
                 }
                 gridManager.RepopulateGrid(); // Spawn new dots
 
-                dotsIndices = new List<int[]>(); // Empty dots indices
-                dotNames = new List<string>(); // Empty names
             }
+
+            dotsIndices = new List<int[]>(); // Empty dots indices
+            dotNames = new List<string>(); // Empty names
         }
     }
 
@@ -216,7 +224,7 @@ public class S_GameManager : MonoBehaviour
     {
         bool isSquare = false;
 
-        if (dotNames[0].Equals(name) && dotNames.Count == 4)
+        if (dotNames[0].Equals(name) && dotNames.Count >= 4)
         {
             //Debug.Log("Square made");
             isSquare = true;
