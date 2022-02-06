@@ -110,7 +110,7 @@ public class S_GameManager : MonoBehaviour
                         int[] index = GetIndexOfDot(hit.transform.gameObject.name);
                         //Debug.Log(string.Format("Index: ({0}, {1}) is in list: {2}", index[0], index[1], dotsIndices.Contains(index)));
 
-                        if (!IsSquare(hit.transform.gameObject.name) && CanConnectToCurrentDot(index)) // Check if new dot can connect to new dot
+                        if (CanConnectToCurrentDot(index)) // Check if new dot can connect to old dot
                         {
                             //Debug.Log("Can connect");
                             dotsIndices.Add(index); // Add dot index to list
@@ -119,6 +119,8 @@ public class S_GameManager : MonoBehaviour
                             //Debug.Log(string.Format("Setting last pos: ({0}, {1})", gridManager.GetDotAt(index[0], index[1]).transform.position.x, gridManager.GetDotAt(index[0], index[1]).transform.position.z));
                             connectionManager.SetPoint(dotsIndices.Count - 1, gridManager.GetDotAt(index[0], index[1]).transform.position); // Set new dot as last point
                             connectionManager.AddPoint(mousePos); // Add mouse position to line
+
+                            squareMade = (dotNames.Count == 5 && dotNames[dotNames.Count - 1].Equals(dotNames[0])); // Check if a square has been made
                         }
                     }
                 }
@@ -186,7 +188,7 @@ public class S_GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Check if the new dot is above, below, or beside the current dot
+    /// Check if the new dot is above, below, or beside the current dot and if a square has already been made
     /// </summary>
     /// <param name="index">Index of new dot</param>
     /// <returns>True if the new dot is in a valid position</returns>
@@ -196,7 +198,8 @@ public class S_GameManager : MonoBehaviour
 
         int[] currentIndex = dotsIndices[dotsIndices.Count - 1];
 
-        if ((index[0] == (currentIndex[0] - 1)) && (index[1] == currentIndex[1]) || // Above
+        if (!squareMade &&
+            (index[0] == (currentIndex[0] - 1)) && (index[1] == currentIndex[1]) || // Above
             (index[0] == (currentIndex[0] + 1)) && (index[1] == currentIndex[1]) || // Below
             (index[0] == (currentIndex[0])) && (index[1] == currentIndex[1] - 1) || // Left
             (index[0] == (currentIndex[0])) && (index[1] == currentIndex[1] + 1)) // Right
@@ -219,7 +222,7 @@ public class S_GameManager : MonoBehaviour
 
         if (dotNames[0].Equals(name) && dotNames.Count == 4)
         {
-            Debug.Log("Square made");
+            //Debug.Log("Square made");
             isSquare = true;
         }
 
