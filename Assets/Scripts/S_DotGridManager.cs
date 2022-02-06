@@ -18,6 +18,7 @@ public class S_DotGridManager : MonoBehaviour
     [SerializeField]
     private float offset = 2.5f;
 
+    private char[] trimChar = { 'd', 'o', 't', '(', ')' };
     private S_Dot[][] dotGrid;
 
     private void Start()
@@ -63,8 +64,10 @@ public class S_DotGridManager : MonoBehaviour
     /// Fill grid with dots again
     /// </summary>
     public void RepopulateGrid()
-    {        
-        MakeDotsInAllColumnsFallToLowest();
+    {
+        //Debug.Log("Repopulating grid");
+
+        //MakeDotsInAllColumnsFallToLowest();
         RenameGrid();
     }
 
@@ -202,6 +205,14 @@ public class S_DotGridManager : MonoBehaviour
     {
         dotGrid[i][j].SetOccupied(false); // Set occupation of cell to false    
         Destroy(dotGrid[i][j].GetDot()); // Destory GameObject
+
+        if (i > 1)
+        {
+            StartCoroutine(AnimateDot(dotGrid[i - 1][j].GetDot(), dotGrid[i][j].GetPosition()));
+        }
+
+        //RefillColumn(j);
+        //MoveDotsDownByOne(i, j);        
     }
 
     /// <summary>
@@ -227,13 +238,11 @@ public class S_DotGridManager : MonoBehaviour
     /// <param name="v">Next row number</param>
     public void MoveDot(int i, int j, int u, int v)
     {
-        //Debug.Log(string.Format("Trying from ({0}, {1}) to ({2}, {3})", i, j, u, v));
-
         if ((i >= 0 && i < gridSize[0]) && (j >= 0 && j < gridSize[1]) && (u >= 0 && u < gridSize[0]) && (v >= 0 && v < gridSize[1]) && (i != u))
         {
-            Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {3})", i, j, u, v));
+            //Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {3})", i, j, u, v));
     
-            StartCoroutine(AnimateDot(dotGrid[i][j].GetDot(), dotGrid[u][v].GetPosition()));
+            //StartCoroutine(AnimateDot(dotGrid[i][j].GetDot(), dotGrid[u][v].GetPosition()));
 
             dotGrid[u][v].SetDot(dotGrid[i][j].GetDot()); // Copy over GameObject
             dotGrid[u][v].SetColor(dotGrid[i][j].GetColor()); // Copy overcolor
@@ -265,7 +274,7 @@ public class S_DotGridManager : MonoBehaviour
             {
                 currentMovementTime += Time.deltaTime;
                 dot.transform.position = Vector3.Lerp(curPos, destination, currentMovementTime / totalMovementTime);
-                yield return null/*new WaitForSeconds(0.001f)*/;
+                yield return new WaitForSeconds(0.001f);
             }
         }
     }
@@ -290,6 +299,21 @@ public class S_DotGridManager : MonoBehaviour
     public Color GetDotColor(int row, int column)
     {
         return GetDotAt(row, column).GetComponent<Renderer>().material.color;
+    }
+
+    /// <summary>
+    /// Get index of the dot from its name
+    /// </summary>
+    /// <param name="dotName">Name of dot</param>
+    /// <returns>Index of dot</returns>
+    public int[] GetIndexOfDot(string dotName)
+    {
+        string trimmed = dotName.Trim(trimChar); // Remove all extra chars except ','
+        int[] index = { (int)char.GetNumericValue(trimmed[0]), (int)char.GetNumericValue(trimmed[2]) }; // Get numeric value from chars
+        // Debug.Log("After trim: " + trimmed);
+        // Debug.Log("Index: (" + index[0] + ", " + index[1] + ")");
+
+        return index;
     }
 
     #endregion

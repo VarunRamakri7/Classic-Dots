@@ -11,7 +11,6 @@ public class S_GameManager : MonoBehaviour
     [SerializeField]
     private S_ConnectDots connectionManager;
 
-    private char[] trimChar = { 'd', 'o', 't', '(', ')' };
     private Camera mainCamera;
     private List<int[]> dotsIndices;
     private List<string> dotNames;
@@ -58,7 +57,7 @@ public class S_GameManager : MonoBehaviour
                     //Debug.Log("Hit: " + hit.transform.gameObject.name);
 
                     // Add unique indices
-                    int[] index = GetIndexOfDot(hit.transform.gameObject.name);
+                    int[] index = gridManager.GetIndexOfDot(hit.transform.gameObject.name);
                     dotsIndices.Add(index); // Add dot index to list
                     dotNames.Add(hit.transform.gameObject.name); // Add name to list
                     //PrintIndices();
@@ -107,7 +106,7 @@ public class S_GameManager : MonoBehaviour
                         //Debug.Log("Same Color");
 
                         // Add unique indices
-                        int[] index = GetIndexOfDot(hit.transform.gameObject.name);
+                        int[] index = gridManager.GetIndexOfDot(hit.transform.gameObject.name);
                         //Debug.Log(string.Format("Index: ({0}, {1}) is in list: {2}", index[0], index[1], dotsIndices.Contains(index)));
 
                         if (CanConnectToCurrentDot(index)) // Check if new dot can connect to old dot
@@ -182,21 +181,6 @@ public class S_GameManager : MonoBehaviour
         {
             gridManager.RepopulateGrid();
         }
-    }
-
-    /// <summary>
-    /// Get index of the dot from its name
-    /// </summary>
-    /// <param name="dotName">Name of dot</param>
-    /// <returns>Index of dot</returns>
-    public int[] GetIndexOfDot(string dotName)
-    {
-        string trimmed = dotName.Trim(trimChar); // Remove all extra chars except ','
-        int[] index = { (int)char.GetNumericValue(trimmed[0]), (int)char.GetNumericValue(trimmed[2]) }; // Get numeric value from chars
-        // Debug.Log("After trim: " + trimmed);
-        // Debug.Log("Index: (" + index[0] + ", " + index[1] + ")");
-
-        return index;
     }
 
     /// <summary>
