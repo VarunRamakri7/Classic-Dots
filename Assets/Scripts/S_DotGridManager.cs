@@ -267,7 +267,7 @@ public class S_DotGridManager : MonoBehaviour
             float currentMovementTime = 0.0f; // Amount of time that has passed
             Vector3 curPos = dot.transform.position;
 
-            Debug.Log("Dropping: " + dot.name);
+            // Debug.Log("Dropping: " + dot.name);
 
             // Move dot to new location
             while (dot != null && Vector3.Distance(dot.transform.position, destination) > 0.0f)
@@ -287,6 +287,7 @@ public class S_DotGridManager : MonoBehaviour
     /// <returns></returns>
     public GameObject GetDotAt(int row, int column)
     {
+        //if ((row >= 0 && row < gridSize[0]) && (column >= 0 && column < gridSize[1]))
         return dotGrid[row][column].GetDot();
     }
 
@@ -309,9 +310,10 @@ public class S_DotGridManager : MonoBehaviour
     public int[] GetIndexOfDot(string dotName)
     {
         string trimmed = dotName.Trim(trimChar); // Remove all extra chars except ','
-        int[] index = { (int)char.GetNumericValue(trimmed[0]), (int)char.GetNumericValue(trimmed[2]) }; // Get numeric value from chars
-        // Debug.Log("After trim: " + trimmed);
-        // Debug.Log("Index: (" + index[0] + ", " + index[1] + ")");
+        //Debug.Log("After trim: " + trimmed);
+        string[] split = trimmed.Split(',');
+        int[] index = { int.Parse(split[0]), int.Parse(split[1]) }; // Get numeric value from chars
+        //Debug.Log("Got Index: (" + index[0] + ", " + index[1] + ")");
 
         return index;
     }
