@@ -1,7 +1,5 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class S_DotGridManager : MonoBehaviour
 {
@@ -54,6 +52,12 @@ public class S_DotGridManager : MonoBehaviour
             {
                 Vector3 position = new Vector3(startPos.x + (i * offset), startPos.y, startPos.z + (j * offset)); // Set position while accounting for offset
                 dotGrid[i][j] = MakeNewDot(position); // Make new dot
+
+                // Set next position for previous dot
+                if (i > 0 && j > 0)
+                {
+                    dotGrid[i - 1][j - 1].SetNextPosition(position);
+                }
             }
         }
 
@@ -69,11 +73,11 @@ public class S_DotGridManager : MonoBehaviour
 
         MakeDotsInAllColumnsFallToLowest();
         //RefillAllColumns();
-        RenameGrid();
+        //RenameGrid();
     }
 
     /// <summary>
-    /// Move dots in this colomn down by one element until row
+    /// Move dots in this colomn down by one element until empty row
     /// </summary>
     /// <param name="row">Row with an empty cell</param>
     /// <param name="column">Column with an empty cell</param>
@@ -117,6 +121,7 @@ public class S_DotGridManager : MonoBehaviour
     /// </summary>
     public void RefillAllColumns()
     {
+        // Iterate through all columns and refill them
         for (int j = 0; j < gridSize[1]; j++)
         {
             RefillColumn(j);
@@ -228,6 +233,7 @@ public class S_DotGridManager : MonoBehaviour
     {
         GameObject dot = Instantiate(prefab, position, Quaternion.identity); // Instantiate the prefab
         dot.transform.parent = gridParent.transform; // Set parent
+        //dot.GetComponent<SphereCollider>().enabled = true; // Enable collider
         int color = Random.Range(0, 3); // Set color
 
         return new S_Dot(dot, position, color, true);
@@ -278,9 +284,10 @@ public class S_DotGridManager : MonoBehaviour
             {
                 currentMovementTime += Time.deltaTime;
                 dot.transform.position = Vector3.Lerp(curPos, destination, currentMovementTime / totalMovementTime);
-                yield return new WaitForSeconds(0.001f);
+                yield return null;
             }
         }
+        yield return new WaitForSeconds(0.1f);
     }
 
     /// <summary>
