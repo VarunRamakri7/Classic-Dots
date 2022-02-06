@@ -47,7 +47,7 @@ public class S_ConnectDots : MonoBehaviour
     /// <param name="point">Point to add to Line</param>
     public void AddPoint(Vector3 point)
     {
-        if (!positions.Contains(point))
+        if (!positions.Contains(point) || point.Equals(positions[0]))
         {
             point.y = 0.2f; // Flatten point
             positions.Add(point); // Add new position to list
@@ -90,11 +90,13 @@ public class S_ConnectDots : MonoBehaviour
         return positions.Count;
     }
 
+    /// <summary>
+    /// Empty the line and positions
+    /// </summary>
     public void EmptyLine()
     {
         lineRenderer.enabled = false;
         positions = new List<Vector3>(); // Reset positions
-        //lineRenderer.positionCount = 0; // Set position count to 0
     }
 
     /// <summary>

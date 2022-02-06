@@ -14,7 +14,7 @@ public class S_GameManager : MonoBehaviour
     private char[] trimChar = { 'd', 'o', 't', '(', ')' };
     private Camera mainCamera;
     private List<int[]> dotsIndices;
-    private string lastDotName;
+    private List<string> dotNames;
     private bool squareMade;
 
     // Start is called before the first frame update
@@ -26,8 +26,8 @@ public class S_GameManager : MonoBehaviour
         }
 
         mainCamera = Camera.main; // Get main camera
-        dotsIndices = new List<int[]>(); // Initialize array of indices
-        lastDotName = "";
+        dotsIndices = new List<int[]>(); // Initialize List of indices
+        dotNames = new List<string>(); // // Initialize list of names
         squareMade = false;
     }
 
@@ -56,17 +56,15 @@ public class S_GameManager : MonoBehaviour
                 if (hit.transform.gameObject.tag == "dot")
                 {
                     //Debug.Log("Hit: " + hit.transform.gameObject.name);
-                    
+
                     // Add unique indices
                     int[] index = GetIndexOfDot(hit.transform.gameObject.name);
-                    if (!dotsIndices.Contains(index))
-                    {
-                        dotsIndices.Add(index); // Add dot index to list
-                        lastDotName = hit.transform.gameObject.name;
+                    dotsIndices.Add(index); // Add dot index to list
+                    dotNames.Add(hit.transform.gameObject.name); // Add name to list
+                    //PrintIndices();
 
-                        connectionManager.SetLineColor(hit.transform.gameObject.GetComponent<Renderer>().material.color); // Change line color
-                        connectionManager.AddPoint(gridManager.GetDotAt(index[0], index[1]).transform.position); // Add position of GameObject to line
-                    }
+                    connectionManager.SetLineColor(hit.transform.gameObject.GetComponent<Renderer>().material.color); // Change line color
+                    connectionManager.AddPoint(gridManager.GetDotAt(index[0], index[1]).transform.position); // Add position of GameObject to line
                 }
             }
         }
@@ -95,27 +93,28 @@ public class S_GameManager : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                // Check if a dot is hit
-                if (hit.transform.gameObject.tag == "dot")
+                // Check if a dot is hit and see if this is already part of the line unless it's a square
+                if (hit.transform.gameObject.tag == "dot" && (!dotNames.Contains(hit.transform.gameObject.name) || IsSquare(hit.transform.gameObject.name)))
                 {
                     // Debug.Log("Drag Hit: " + hit.transform.gameObject.name);
 
                     // Compare colors of dots
                     Color hitDotColor = hit.transform.gameObject.GetComponent<Renderer>().material.color; // Get color of new dot
                     Color lineColor = gridManager.GetDotColor(dotsIndices[0][0], dotsIndices[0][1]); // Get color of first dot
-                    if (lineColor.Equals(hitDotColor) && lastDotName != hit.transform.gameObject.name)
+
+                    if (lineColor.Equals(hitDotColor))
                     {
                         //Debug.Log("Same Color");
 
                         // Add unique indices
                         int[] index = GetIndexOfDot(hit.transform.gameObject.name);
-                        if (!dotsIndices.Contains(index) && CanConnectToCurrentDot(index)) // Check if new dot can connect to new dot
-                        {
-                            // TODO: Fix line connecting to same dot
+                        //Debug.Log(string.Format("Index: ({0}, {1}) is in list: {2}", index[0], index[1], dotsIndices.Contains(index)));
 
+                        if (!IsSquare(hit.transform.gameObject.name) && CanConnectToCurrentDot(index)) // Check if new dot can connect to new dot
+                        {
                             //Debug.Log("Can connect");
                             dotsIndices.Add(index); // Add dot index to list
-                            lastDotName = hit.transform.gameObject.name; // Update last dot name
+                            dotNames.Add(hit.transform.gameObject.name); // Add name to list
 
                             //Debug.Log(string.Format("Setting last pos: ({0}, {1})", gridManager.GetDotAt(index[0], index[1]).transform.position.x, gridManager.GetDotAt(index[0], index[1]).transform.position.z));
                             connectionManager.SetPoint(dotsIndices.Count - 1, gridManager.GetDotAt(index[0], index[1]).transform.position); // Set new dot as last point
@@ -138,6 +137,7 @@ public class S_GameManager : MonoBehaviour
             
             // TODO: Destroy dots added to list
             dotsIndices = new List<int[]>(); // Empty dots indices
+            dotNames = new List<string>(); // Empty names
             
         }
     }
@@ -178,9 +178,8 @@ public class S_GameManager : MonoBehaviour
     public int[] GetIndexOfDot(string dotName)
     {
         string trimmed = dotName.Trim(trimChar); // Remove all extra chars except ','
-        // Debug.Log("After trim: " + trimmed);
-
         int[] index = { (int)char.GetNumericValue(trimmed[0]), (int)char.GetNumericValue(trimmed[2]) }; // Get numeric value from chars
+        // Debug.Log("After trim: " + trimmed);
         // Debug.Log("Index: (" + index[0] + ", " + index[1] + ")");
 
         return index;
@@ -207,5 +206,23 @@ public class S_GameManager : MonoBehaviour
         }
 
         return canConnect;
+    }
+
+    /// <summary>
+    /// Check if the user has made a square
+    /// </summary>
+    /// <param name="name">Name of the new dot</param>
+    /// <returns>True or false depending on whether a square has been made</returns>
+    public bool IsSquare(string name)
+    {
+        bool isSquare = false;
+
+        if (dotNames[0].Equals(name) && dotNames.Count == 4)
+        {
+            Debug.Log("Square made");
+            isSquare = true;
+        }
+
+        return isSquare;
     }
 }
