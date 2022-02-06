@@ -6,6 +6,7 @@ public class S_Dot
 
     private GameObject dot;
     private Vector3 cellPos;
+    private Vector3 nextPos;
     private bool isOccupied;
     private int color;
 
@@ -16,6 +17,7 @@ public class S_Dot
     {
         dot = new GameObject();
         cellPos = new Vector3();
+        nextPos = new Vector3();
         isOccupied = false;
         SetColor(1);
     }
@@ -27,7 +29,7 @@ public class S_Dot
     /// <param name="position"></param>
     /// <param name="_color"></param>
     /// <param name="status"></param>
-    public S_Dot(GameObject _dot, /*int[] _index,*/ Vector3 position, int _color, bool status)
+    public S_Dot(GameObject _dot, Vector3 position, int _color, bool status)
     {
         dot = _dot;
         cellPos = position;
@@ -76,6 +78,17 @@ public class S_Dot
     {
         return cellPos;
     }
+
+    public void SetNextPosition(Vector3 position)
+    {
+        nextPos = position;
+    }
+
+    public Vector3 GetNextPosition()
+    {
+        return nextPos;
+    }
+
     public void SetColor(int _color)
     {
         color = _color;
