@@ -28,7 +28,7 @@ public class S_GameManager : MonoBehaviour
         dotNames = new List<string>(); // // Initialize list of names
         squareMade = false;
 
-        Physics.gravity = new Vector3(1.0f, 0.0f, 0.0f); // Change direction of gravity
+        //Physics.gravity = new Vector3(1.0f, 0.0f, 0.0f); // Change direction of gravity
     }
 
     private void Update()
@@ -153,10 +153,8 @@ public class S_GameManager : MonoBehaviour
                 for (int i = 0; i < dotsIndices.Count; i++)
                 {
                     gridManager.RemoveDot(dotsIndices[i][0], dotsIndices[i][1]); // Remove all dots
-                    //gridManager.RefillColumn(dotsIndices[i][1]); // Refill column with empty dot
                 }
-                gridManager.RepopulateGrid(); // Spawn new dots
-
+                //gridManager.RepopulateGrid(); // Spawn new dots
             }
 
             dotsIndices = new List<int[]>(); // Empty dots indices
