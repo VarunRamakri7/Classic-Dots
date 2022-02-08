@@ -76,7 +76,6 @@ public class S_DotGridManager : MonoBehaviour
 
         MakeDotsFall();
         RefillAllColumns();
-        //MakeDotsInAllColumnsFallToLowest();
         //RefillAllColumns();
         RenameGrid();
     }
@@ -92,6 +91,7 @@ public class S_DotGridManager : MonoBehaviour
         for (int i = row; i > 0; i--)
         {
             //MoveDot(i - 1, column, i, column);
+            // TODO: Add occupation checking for cell below this cell
             MoveDot(i, column);
         }
 
@@ -99,33 +99,9 @@ public class S_DotGridManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Move dots in all rows down to lowest
-    /// </summary>
-    public void MakeDotsInAllColumnsFallToLowest()
-    {
-        // Iterate through columns
-        for (int j = 0; j < gridSize[1]; j++)
-        {            
-            // Iterate from each row above the lowest filled in the column
-            for (int i = GetLowestFilledRowInColumn(j); i >= 0; i--)
-            {
-                int lowest = GetLowestEmptyRowInColumn(j); // Get the lowest empty cell
-                if (lowest > 0 && i < gridSize[0])
-                {
-                    //Debug.Log(string.Format("Moving in Column {0}", j));
-                    MoveDot(i, j, lowest, j/*, i, j*/); // Move dot
-                    //MoveDot(i, j);
-                    //lowest = i; // Move lowest cell up
-                }
-            }
-
-            //RefillColumn(j);
-        }
-    }
-
-    /// <summary>
     /// Make the dots in the grid fall and fill the empty space
     /// Reference: https://stackoverflow.com/questions/55091008/fall-down-elements-in-2d-array
+    /// TODO: Fix
     /// </summary>
     public void MakeDotsFall()
     {
@@ -149,12 +125,16 @@ public class S_DotGridManager : MonoBehaviour
             {
                 do
                 {
-                    dotsColumn.Insert(0, MakeNewDot(dotGrid[0][j].GetPosition()).GetDot());
+                    dotsColumn.Insert(0, new GameObject());
                 } while (dotsColumn.Count < rowCount);
 
                 for (int r = 0; r < rowCount; r++)
                 {
                     dotGrid[r][j].SetDot(dotsColumn[r]); // put numbers back into original array
+                    if (dotsColumn[r].tag != "dot")
+                    {
+                        dotGrid[r][j].SetOccupied(false);
+                    }
                 }
             }
         }
