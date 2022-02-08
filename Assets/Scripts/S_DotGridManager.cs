@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class S_DotGridManager : MonoBehaviour
@@ -73,7 +74,9 @@ public class S_DotGridManager : MonoBehaviour
 
         // TODO: Make dots fall to make up for space
 
-        MakeDotsInAllColumnsFallToLowest();
+        MakeDotsFall();
+        RefillAllColumns();
+        //MakeDotsInAllColumnsFallToLowest();
         //RefillAllColumns();
         RenameGrid();
     }
@@ -117,6 +120,43 @@ public class S_DotGridManager : MonoBehaviour
             }
 
             //RefillColumn(j);
+        }
+    }
+
+    /// <summary>
+    /// Make the dots in the grid fall and fill the empty space
+    /// Reference: https://stackoverflow.com/questions/55091008/fall-down-elements-in-2d-array
+    /// </summary>
+    public void MakeDotsFall()
+    {
+        int rowCount = gridSize[0];
+
+        for (int j = 0; j < gridSize[1]; j++)
+        {
+            List<GameObject> dotsColumn = new List<GameObject>();
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                GameObject tempDot = dotGrid[i][j].GetDot();
+
+                if (dotGrid[i][j].IsOccupied())
+                {
+                    dotsColumn.Add(tempDot); // Add occupied dots
+                }
+            }
+
+            if (dotsColumn.Count < rowCount)
+            {
+                do
+                {
+                    dotsColumn.Insert(0, MakeNewDot(dotGrid[0][j].GetPosition()).GetDot());
+                } while (dotsColumn.Count < rowCount);
+
+                for (int r = 0; r < rowCount; r++)
+                {
+                    dotGrid[r][j].SetDot(dotsColumn[r]); // put numbers back into original array
+                }
+            }
         }
     }
 
@@ -239,7 +279,6 @@ public class S_DotGridManager : MonoBehaviour
     {
         GameObject dot = Instantiate(prefab, position, Quaternion.identity); // Instantiate the prefab
         dot.transform.parent = gridParent.transform; // Set parent
-        //dot.GetComponent<SphereCollider>().enabled = true; // Enable collider
         int color = Random.Range(0, 3); // Set color
 
         return new S_Dot(dot, position, color, true);
