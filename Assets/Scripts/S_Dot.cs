@@ -49,29 +49,6 @@ public class S_Dot
         }
     }
 
-    public void MoveDotToNextPosition()
-    {
-        if (Vector3.Distance(dot.transform.position, nextPos) > 0.01)
-        {
-            dot.transform.position = Vector3.Lerp(dot.transform.position, nextPos, Time.fixedDeltaTime * speed);
-        }
-        
-        //cellPos = nextPos; // Reset position
-    }
-
-    public IEnumerator MoveDotToNextPosition(float _speed)
-    {
-        if (Vector3.Distance(dot.transform.position, nextPos) > 0.01)
-        {
-            dot.transform.position = Vector3.Lerp(dot.transform.position, nextPos, Time.fixedDeltaTime * _speed);
-        }
-
-        cellPos = nextPos; // Reset position
-
-        yield return new WaitForSeconds(1.0f);
-    }
-
-
     #region Getters and Setters
     public void SetDot(GameObject _dot)
     {

@@ -152,7 +152,7 @@ public class S_GameManager : MonoBehaviour
                 // Iterate through indices and remove all connected dots in reverse order
                 for (int i = 0; i < dotsIndices.Count; i++)
                 {
-                    gridManager.RemoveDot(dotsIndices[i][0], dotsIndices[i][1]); // Remove all dots
+                    gridManager.RemoveDot(dotsIndices[i][0], dotsIndices[i][1]); // Remove dot
                 }
                 gridManager.RepopulateGrid(); // Spawn new dots
             }
