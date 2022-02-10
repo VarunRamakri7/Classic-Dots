@@ -5,8 +5,6 @@ public class S_Dot
 {
     public enum DotColors { RED, GREEN, BLUE };
 
-    private float speed = 1.5f;
-
     private GameObject dot;
     private Vector3 cellPos;
     private Vector3 nextPos;
@@ -67,6 +65,11 @@ public class S_Dot
     public void SetPosition(Vector3 position)
     {
         cellPos = position;
+
+        if (dot != null && dot.tag == "dot")
+        {
+            dot.transform.position = cellPos;
+        }
     }
 
     public Vector3 GetPosition()

@@ -72,57 +72,78 @@ public class S_DotGridManager : MonoBehaviour
     {
         //Debug.Log("Repopulating grid");
 
-        // TODO: Make dots fall to make up for space
-        MakeDotsFall();
-
-        //RefillAllColumns();
-        RenameGrid();
-    }
-
-    /// <summary>
-    /// Move dots in this colomn down by one element until empty row
-    /// </summary>
-    /// <param name="row">Row with an empty cell</param>
-    /// <param name="column">Column with an empty cell</param>
-    public void MoveDotsDownByOne(int row, int column)
-    {
-        // Iterate through column and move dots down by one
-        for (int i = row; i > 0; i--)
-        {
-            //MoveDot(i - 1, column, i, column);
-
-            // Check occupation for cell below this cell
-            if ((i+ 1) < gridSize[1] && !dotGrid[i + 1][column].IsOccupied())
-            {
-                MoveDot(i, column);
-            }
-        }
-
-        RefillColumn(column);
+        MakeDotsFall(); // Dots fall to empty space
+        RefillAllColumns(); // Refill free space
+        RenameGrid(); // Rename grid
     }
 
     /// <summary>
     /// Make the dots in the grid fall and fill the empty space
-    /// Reference: https://stackoverflow.com/questions/55091008/fall-down-elements-in-2d-array
-    /// TODO: Fix
     /// </summary>
     public void MakeDotsFall()
     {
         // Iterate through each column
         for (int j = 0; j < gridSize[1]; j++)
         {
-            //List<GameObject> dotsColumn = new List<GameObject>();
-
-            // Iterate through column in reverse
-            for (int i = gridSize[0]; i > 0; i--)
+            if (ColumnHasEmptyCell(j))
             {
-                // Check if the cell below is empty
-                if ((i + 1) < gridSize[0] &&!dotGrid[i + 1][j].IsOccupied())
+                Debug.Log("Empty Cell in: " + j);
+
+                List<GameObject> dotsColumn = new List<GameObject>();
+
+                // Get all dots in column
+                for (int i = 0; i < gridSize[0]; i++)
                 {
-                    MoveDot(i + 1, j, i, j); // Move dot down by one
+                    // Make temporary dot
+                    // GameObject temp = MakeNewDot(dotGrid[i][j].GetPosition()).GetDot();
+
+                    if (dotGrid[i][j].IsOccupied())
+                    {
+                        Debug.Log(string.Format("Taking at: ({0}, {1})", i, j));
+
+                        //temp = dotGrid[i][j].GetDot();
+                        dotsColumn.Add(dotGrid[i][j].GetDot());
+                        dotGrid[i][j].SetOccupied(false);
+                        //RemoveDot(i, j);
+                    }
+
+                    //dotsColumn.Add(temp); // Add temp to list
+                }
+
+                dotsColumn.Reverse(); // Reverse the list of dots
+
+                // Refill column with dots
+                int index = 0;
+                for (int i = gridSize[0] - 1; i >= (gridSize[0] - dotsColumn.Count); i--)
+                {
+                    Debug.Log(string.Format("Adding at: ({0}, {1})", i, j));
+
+                    dotGrid[i][j].SetDot(dotsColumn[index++]);
+                    dotGrid[i][j].SetOccupied(true);
                 }
             }
         }
+    }
+
+
+    /// <summary>
+    /// Check if the column has an empty cell
+    /// </summary>
+    /// <param name="column">Column to check</param>
+    /// <returns>True if there's at least one empty cell, false if zero empty space</returns>
+    public bool ColumnHasEmptyCell(int column)
+    {
+        bool hasSpace = false;
+
+         for (int i = 0; i < gridSize[0]; i++)
+        {
+            if (!dotGrid[i][column].IsOccupied())
+            {
+                hasSpace = true;
+            }
+        }
+
+        return hasSpace;
     }
 
     /// <summary>
@@ -173,21 +194,6 @@ public class S_DotGridManager : MonoBehaviour
 
     #region Dot Related
     /// <summary>
-    /// Removes the dot GameObject at the given index
-    /// </summary>
-    /// <param name="i">Column number</param>
-    /// <param name="j">Row number</param>
-    public void RemoveDot(int i, int j)
-    {
-        dotGrid[i][j].SetOccupied(false); // Set occupation of cell to false    
-        Destroy(dotGrid[i][j].GetDot()); // Destory GameObject
-
-        //MoveDotsDownByOne(i, j);
-
-        //Debug.Log(string.Format("Removed: ({0}, {1})", i, j));
-    }
-
-    /// <summary>
     /// Make a new dot at this position
     /// </summary>
     /// <param name="position">Position of this dot</param>
@@ -223,6 +229,19 @@ public class S_DotGridManager : MonoBehaviour
             dotGrid[i][j].SetDot(new GameObject());
             dotGrid[i][j].SetOccupied(false);
         }
+    }
+
+    /// <summary>
+    /// Removes the dot GameObject at the given index
+    /// </summary>
+    /// <param name="i">Column number</param>
+    /// <param name="j">Row number</param>
+    public void RemoveDot(int i, int j)
+    {
+        dotGrid[i][j].SetOccupied(false); // Set occupation of cell to false
+        Destroy(dotGrid[i][j].GetDot()); // Destory GameObject
+
+        //Debug.Log(string.Format("Removed: ({0}, {1})", i, j));
     }
 
     /// <summary>
