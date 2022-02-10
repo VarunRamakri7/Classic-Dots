@@ -33,8 +33,6 @@ public class S_GameManager : MonoBehaviour
 
     private void Update()
     {
-        //CheckKeyPress();
-
         CheckMousePress();
         CheckMouseHold();
         CheckMouseRelease();
@@ -95,7 +93,8 @@ public class S_GameManager : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 // Check if a dot is hit and see if this is already part of the line unless it's a square
-                if (hit.transform.gameObject.tag == "dot" && (!dotNames.Contains(hit.transform.gameObject.name) || IsSquare(hit.transform.gameObject.name)))
+                squareMade = IsSquare(hit.transform.gameObject.name);
+                if (hit.transform.gameObject.tag == "dot" && (!dotNames.Contains(hit.transform.gameObject.name) ||squareMade))
                 {
                     // Debug.Log("Drag Hit: " + hit.transform.gameObject.name);
 
@@ -150,43 +149,16 @@ public class S_GameManager : MonoBehaviour
                 }
 
                 // Iterate through indices and remove all connected dots in reverse order
+                Color dotsColor = gridManager.GetDotColor(dotsIndices[0][0], dotsIndices[0][1]);
                 for (int i = 0; i < dotsIndices.Count; i++)
                 {
                     gridManager.RemoveDot(dotsIndices[i][0], dotsIndices[i][1]); // Remove dot
                 }
-                gridManager.RepopulateGrid(); // Spawn new dots
+                gridManager.RepopulateGrid(squareMade, dotsColor); // Spawn new dots
             }
 
             dotsIndices = new List<int[]>(); // Empty dots indices
             dotNames = new List<string>(); // Empty names
-        }
-    }
-
-    /// <summary>
-    /// Check keyboard press
-    /// </summary>
-    public void CheckKeyPress()
-    {
-        // Destroy dots
-        if(Input.GetKeyDown(KeyCode.D))
-        {
-            if (dotsIndices.Count > 1)
-            {
-                connectionManager.EmptyLine(); // Erase line
-
-                // Iterate through indices and remove all connected dots
-                for (int i = 0; i < dotsIndices.Count; i++)
-                {
-                    gridManager.RemoveDot(dotsIndices[i][0], dotsIndices[i][1]); // Remove all dots
-                }
-                dotsIndices = new List<int[]>(); // Reset list
-            }
-        }
-
-        // Spawn new dots
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            gridManager.RepopulateGrid();
         }
     }
 

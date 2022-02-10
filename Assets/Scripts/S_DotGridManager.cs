@@ -68,9 +68,17 @@ public class S_DotGridManager : MonoBehaviour
     /// <summary>
     /// Fill grid with dots again
     /// </summary>
-    public void RepopulateGrid()
+    public void RepopulateGrid(bool isSquare, Color squareColor)
     {
         //Debug.Log("Repopulating grid");
+        //Debug.Log("Square Made: " + isSquare);
+
+        // Check if square has been made
+        if (isSquare)
+        {
+            //Debug.Log("Square color: " + squareColor);
+            DestroyAllDotsOfColor(squareColor);
+        }
 
         MakeDotsFall(); // Dots fall to empty space
         RefillAllColumns(); // Refill free space
@@ -87,7 +95,7 @@ public class S_DotGridManager : MonoBehaviour
         {
             if (ColumnHasEmptyCell(j))
             {
-                Debug.Log("Empty Cell in: " + j);
+                //Debug.Log("Empty Cell in: " + j);
 
                 List<GameObject> dotsColumn = new List<GameObject>();
 
@@ -99,15 +107,11 @@ public class S_DotGridManager : MonoBehaviour
 
                     if (dotGrid[i][j].IsOccupied())
                     {
-                        Debug.Log(string.Format("Taking at: ({0}, {1})", i, j));
+                        //Debug.Log(string.Format("Taking at: ({0}, {1})", i, j));
 
-                        //temp = dotGrid[i][j].GetDot();
                         dotsColumn.Add(dotGrid[i][j].GetDot());
                         dotGrid[i][j].SetOccupied(false);
-                        //RemoveDot(i, j);
                     }
-
-                    //dotsColumn.Add(temp); // Add temp to list
                 }
 
                 dotsColumn.Reverse(); // Reverse the list of dots
@@ -116,7 +120,7 @@ public class S_DotGridManager : MonoBehaviour
                 int index = 0;
                 for (int i = gridSize[0] - 1; i >= (gridSize[0] - dotsColumn.Count); i--)
                 {
-                    Debug.Log(string.Format("Adding at: ({0}, {1})", i, j));
+                    //Debug.Log(string.Format("Adding at: ({0}, {1})", i, j));
 
                     dotGrid[i][j].SetDot(dotsColumn[index++]);
                     dotGrid[i][j].SetOccupied(true);
@@ -175,6 +179,35 @@ public class S_DotGridManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Destroy all dots of the given color
+    /// </summary>
+    /// <param name="color">Color of dots to destroy</param>
+    public void DestroyAllDotsOfColor(Color color)
+    {
+        //Debug.Log("Destroying all dots of color: " + color);
+
+        // Iterate through all rows
+        for (int i = 0; i < gridSize[0]; i++)
+        {
+            // Iterate through all columns
+            for (int j = 0; j < gridSize[1]; j++)
+            {
+                Color temp = GetDotColor(i, j); // Get color of current dot
+
+                //Debug.Log("Color match: " + temp.Equals(color));
+
+                // Check if color of dot matches color of square
+                if (dotGrid[i][j].IsOccupied() && temp.Equals(color))
+                {
+                    //Debug.Log(string.Format("Removing: ({0}, {1})", i, j));
+
+                    RemoveDot(i, j); // Remove dot if colors match
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Rename all dots in the grid
     /// </summary>
     public void RenameGrid()
@@ -185,7 +218,7 @@ public class S_DotGridManager : MonoBehaviour
             {
                 if (dotGrid[i][j].GetDot() != null)
                 {
-                    dotGrid[i][j].GetDot().name = "dot(" + i + "," + j + ")";
+                    dotGrid[i][j].GetDot().name = "dot(" + i + "," + j + ")"; // Add index to name in correct format
                 }
             }
         }
