@@ -5,11 +5,6 @@ public class S_ConnectDots : MonoBehaviour
 {
     public S_ConnectDots connectDots;
 
-    //[SerializeField]
-    //private S_GameManager gameManager;
-    [SerializeField]
-    private S_DotGridManager gridManager;
-
     private LineRenderer lineRenderer;
     private List<Vector3> positions; // Positions for line renderer
 
