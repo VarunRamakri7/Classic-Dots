@@ -120,6 +120,26 @@ public class S_GameManager : MonoBehaviour
                         }
                     }
                 }
+                else
+                {
+                    // TODO: Fix Deselect dots
+                    if (hit.transform.gameObject.tag == "dot")
+                    {
+                        string hitName = hit.transform.gameObject.name;
+                        if (dotNames.Count > 1 && dotNames[dotNames.Count - 1] == hitName)
+                        {
+                            Debug.Log("Deselecting: " + hitName);
+
+                            // Remove dot from lists
+                            dotNames.RemoveAt(dotNames.Count - 1);
+                            dotsIndices.RemoveAt(dotNames.Count - 1);
+
+                            RefreshLine(); // Refresh line renderer
+
+                            connectionManager.AddPoint(mousePos); // Add mouse position to line
+                        }
+                    }
+                }
             }
         }
     }
@@ -205,5 +225,19 @@ public class S_GameManager : MonoBehaviour
         }
 
         return isSquare;
+    }
+
+    /// <summary>
+    /// Refresh the line renderer
+    /// </summary>
+    public void RefreshLine()
+    {
+        connectionManager.EmptyLine();
+        int i = 0;
+        foreach (int[] index in dotsIndices)
+        {
+            connectionManager.SetPoint(i, gridManager.GetDotAt(index[0], index[1]).transform.position);
+            i++;
+        }
     }
 }
