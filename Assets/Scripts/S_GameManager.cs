@@ -90,11 +90,10 @@ public class S_GameManager : MonoBehaviour
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit) && !squareMade)
             {
                 // Check if a dot is hit and see if this is already part of the line unless it's a square
-                squareMade = IsSquare(hit.transform.gameObject.name);
-                if (hit.transform.gameObject.tag == "dot" && (!dotNames.Contains(hit.transform.gameObject.name) ||squareMade))
+                if (hit.transform.gameObject.tag == "dot" && (!dotNames.Contains(hit.transform.gameObject.name) || IsSquare(hit.transform.gameObject.name)))
                 {
                     // Debug.Log("Drag Hit: " + hit.transform.gameObject.name);
 
@@ -119,7 +118,7 @@ public class S_GameManager : MonoBehaviour
                             connectionManager.SetPoint(dotsIndices.Count - 1, gridManager.GetDotAt(index[0], index[1]).transform.position); // Set new dot as last point
                             connectionManager.AddPoint(mousePos); // Add mouse position to line
 
-                            squareMade = (dotNames.Count > 4 && dotNames[dotNames.Count - 1].Equals(dotNames[0])); // Check if a square has been made
+                            squareMade = IsSquare(hit.transform.gameObject.name);
                         }
                     }
                 }
@@ -144,6 +143,7 @@ public class S_GameManager : MonoBehaviour
                 // Remove last element from lists if square is made
                 if (squareMade)
                 {
+                    // Remove repeated entry
                     dotsIndices.RemoveAt(dotsIndices.Count - 1);
                     dotNames.RemoveAt(dotNames.Count - 1);
                 }
@@ -159,6 +159,8 @@ public class S_GameManager : MonoBehaviour
 
             dotsIndices = new List<int[]>(); // Empty dots indices
             dotNames = new List<string>(); // Empty names
+
+            squareMade = false; // Reset to false
         }
     }
 
