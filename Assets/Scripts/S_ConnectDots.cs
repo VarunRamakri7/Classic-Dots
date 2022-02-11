@@ -17,8 +17,8 @@ public class S_ConnectDots : MonoBehaviour
 
         // Get line renderer and set defaults
         lineRenderer = this.gameObject.GetComponent<LineRenderer>(); // Add line renderer to GameObject
-        lineRenderer.startWidth = 0.25f;
-        lineRenderer.endWidth = 0.25f;
+        lineRenderer.startWidth = 0.1f;
+        lineRenderer.endWidth = 0.1f;
         lineRenderer.useWorldSpace = true;
         lineRenderer.enabled = false; // Disable line renderer
 
