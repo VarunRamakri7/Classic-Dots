@@ -133,12 +133,12 @@ public class S_DotGridManager : MonoBehaviour
                 dotsColumn.Reverse(); // Reverse the list of dots
 
                 // Drop all dots in list
-                foreach(GameObject dot in dotsColumn)
+                /*foreach(GameObject dot in dotsColumn)
                 {
                     int[] dotIndex = GetIndexOfDot(dot.name);
 
-                    StartCoroutine(dotGrid[dotIndex[0]][dotIndex[1]].DropDot());
-                }
+                    StartCoroutine(WaitForDotDrops(dotIndex[0], dotIndex[1]));
+                }*/
 
                 // Refill column with dots
                 int index = 0;
@@ -247,6 +247,29 @@ public class S_DotGridManager : MonoBehaviour
             }
         }
 
+    }
+
+    /// <summary>
+    /// Coroutine to wait for dot dropping coroutine to finish
+    /// </summary>
+    /// <param name="row">Row number of dot to drop</param>
+    /// <param name="column">Column number of dot to drop</param>
+    /// <returns></returns>
+    public IEnumerator WaitForDotDrops(int row, int column)
+    {
+        Debug.Log(string.Format("Dropping: ({0}, {1})", row, column));
+
+        yield return StartCoroutine(dotGrid[row][column].DropDot());
+    }
+
+    /// <summary>
+    /// Coroutine that waits for seconds
+    /// </summary>
+    /// <param name="seconds">Seconds to wait for</param>
+    /// <returns></returns>
+    public IEnumerator WaitForSeconds(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
     }
 
     #region Dot Related
