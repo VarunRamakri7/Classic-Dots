@@ -27,8 +27,6 @@ public class S_GameManager : MonoBehaviour
         dotsIndices = new List<int[]>(); // Initialize List of indices
         dotNames = new List<string>(); // // Initialize list of names
         squareMade = false;
-
-        //Physics.gravity = new Vector3(1.0f, 0.0f, 0.0f); // Change direction of gravity
     }
 
     private void Update()
@@ -133,7 +131,10 @@ public class S_GameManager : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
-            connectionManager.EmptyLine(); // Erase Line
+            if (connectionManager != null)
+            {
+                connectionManager.EmptyLine(); // Erase Line
+            }
 
             // Destroy dots added to list
             if (dotsIndices.Count > 1)
