@@ -53,16 +53,31 @@ public class S_DotGridManager : MonoBehaviour
             {
                 Vector3 position = new Vector3(startPos.x + (i * offset), startPos.y, startPos.z + (j * offset)); // Set position while accounting for offset
                 dotGrid[i][j] = MakeNewDot(position); // Make new dot
-
-                // Set next position for previous dot
-                if (i > 0 && j > 0)
-                {
-                    dotGrid[i - 1][j - 1].SetNextPosition(dotGrid[i][j].GetPosition());
-                }
+                dotGrid[i][j].SetNextPosition(position); // Initialize next position as current position
             }
         }
 
         RenameGrid(); // Set all names
+        SetNextPositions(); // Set next positions
+    }
+
+    /// <summary>
+    /// Set the next positions of all the dots
+    /// </summary>
+    public void SetNextPositions()
+    {
+        for (int j = 0; j < gridSize[1]; j++)
+        {
+            for (int i = 0; i < gridSize[0]; i++)
+            {
+                int nextIndex = i + 1;
+
+                if (nextIndex < gridSize[0])
+                {
+                    dotGrid[i][j].SetNextPosition(dotGrid[nextIndex][j].GetPosition());
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -83,6 +98,7 @@ public class S_DotGridManager : MonoBehaviour
         MakeDotsFall(); // Dots fall to empty space
         RefillAllColumns(); // Refill free space
         RenameGrid(); // Rename grid
+        SetNextPositions(); // Reset next positions
     }
 
     /// <summary>
@@ -115,6 +131,14 @@ public class S_DotGridManager : MonoBehaviour
                 }
 
                 dotsColumn.Reverse(); // Reverse the list of dots
+
+                // Drop all dots in list
+                foreach(GameObject dot in dotsColumn)
+                {
+                    int[] dotIndex = GetIndexOfDot(dot.name);
+
+                    StartCoroutine(dotGrid[dotIndex[0]][dotIndex[1]].DropDot());
+                }
 
                 // Refill column with dots
                 int index = 0;
