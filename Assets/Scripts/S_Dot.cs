@@ -8,8 +8,9 @@ public class S_Dot
     private GameObject dot;
     private Vector3 cellPos;
     private Vector3 nextPos;
-    private bool isOccupied;
+    private bool isOccupied = false;
     private int color;
+    private float speed = 1.0f;
 
     /// <summary>
     /// Default Constructor
@@ -44,6 +45,15 @@ public class S_Dot
         {
             //Debug.Log("Setting color: " + (DotColors)color);
             dot.GetComponent<Renderer>().material.color = _color;
+        }
+    }
+
+    public IEnumerator DropDot()
+    {
+        while (dot.transform.position != nextPos)
+        {
+            dot.transform.position = Vector3.MoveTowards(dot.transform.position, nextPos, speed * Time.deltaTime);
+            yield return new WaitForEndOfFrame();
         }
     }
 
