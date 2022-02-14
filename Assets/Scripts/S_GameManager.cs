@@ -14,6 +14,7 @@ public class S_GameManager : MonoBehaviour
     private List<int[]> dotsIndices;
     private List<string> dotNames;
     private bool squareMade;
+    private bool canConnect;
 
     // Start is called before the first frame update
     void Start()
@@ -25,8 +26,9 @@ public class S_GameManager : MonoBehaviour
 
         mainCamera = Camera.main; // Get main camera
         dotsIndices = new List<int[]>(); // Initialize List of indices
-        dotNames = new List<string>(); // // Initialize list of names
+        dotNames = new List<string>(); // Initialize list of names
         squareMade = false;
+        canConnect = true;
     }
 
     private void Update()
@@ -107,7 +109,7 @@ public class S_GameManager : MonoBehaviour
                         int[] index = gridManager.GetIndexOfDot(hit.transform.gameObject.name);
                         //Debug.Log(string.Format("Index: ({0}, {1}) is in list: {2}", index[0], index[1], dotsIndices.Contains(index)));
 
-                        if (CanConnectToCurrentDot(index)) // Check if new dot can connect to old dot
+                        if (CanConnectToCurrentDot(index) && canConnect) // Check if new dot can connect to old dot
                         {
                             //Debug.Log("Can connect");
                             dotsIndices.Add(index); // Add dot index to list
@@ -119,11 +121,13 @@ public class S_GameManager : MonoBehaviour
                             squareMade = IsSquare(hit.transform.gameObject.name);
                         }
                     }
+
+                    canConnect = false;
                 }
                 else
                 {
                     // TODO: Fix Deselect dots
-                    if (hit.transform.gameObject.tag == "dot")
+                    if (hit.transform.gameObject.tag == "dot" && canConnect)
                     {
                         string hitName = hit.transform.gameObject.name;
                         if (dotNames.Count > 1 && dotNames[dotNames.Count - 1] == hitName)
@@ -131,14 +135,21 @@ public class S_GameManager : MonoBehaviour
                             Debug.Log("Deselecting: " + hitName);
 
                             // Remove dot from lists
-                            dotNames.RemoveAt(dotNames.Count - 1);
-                            dotsIndices.RemoveAt(dotNames.Count - 1);
+                            dotNames.Remove(hitName);
+                            int[] index = gridManager.GetIndexOfDot(hitName);
+                            dotsIndices.Remove(index);
 
                             RefreshLine(); // Refresh line renderer
 
                             connectionManager.AddPoint(mousePos); // Add mouse position to line
                         }
                     }
+                    else if (hit.transform.gameObject.tag == "floor")
+                    {
+                        Debug.Log("Hitting plane");
+                        canConnect = true;
+                    }
+                    
                 }
             }
         }
@@ -236,7 +247,10 @@ public class S_GameManager : MonoBehaviour
         int i = 0;
         foreach (int[] index in dotsIndices)
         {
-            connectionManager.SetPoint(i, gridManager.GetDotAt(index[0], index[1]).transform.position);
+            Debug.Log(string.Format("Adding ({0}, {1}) to line", index[0], index[1]));
+
+            //connectionManager.SetPoint(i, gridManager.GetDotAt(index[0], index[1]).transform.position);
+            connectionManager.AddPoint(gridManager.GetDotAt(index[0], index[1]).transform.position);
             i++;
         }
     }
