@@ -17,7 +17,7 @@ public class S_Dot
     /// </summary>
     public S_Dot()
     {
-        dot = new GameObject();
+        dot = null;
         cellPos = new Vector3();
         nextPos = new Vector3();
         isOccupied = false;
