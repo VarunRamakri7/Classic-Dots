@@ -14,7 +14,7 @@ public class S_GameManager : MonoBehaviour
     private List<int[]> dotsIndices;
     private List<string> dotNames;
     private bool squareMade;
-    private bool canConnect;
+    //private bool canConnect;
 
     // Start is called before the first frame update
     void Start()
@@ -109,7 +109,7 @@ public class S_GameManager : MonoBehaviour
                         int[] index = gridManager.GetIndexOfDot(hit.transform.gameObject.name);
                         //Debug.Log(string.Format("Index: ({0}, {1}) is in list: {2}", index[0], index[1], dotsIndices.Contains(index)));
 
-                        if (CanConnectToCurrentDot(index) && canConnect) // Check if new dot can connect to old dot
+                        if (CanConnectToCurrentDot(index) /*&& canConnect*/) // Check if new dot can connect to old dot
                         {
                             //Debug.Log("Can connect");
                             dotsIndices.Add(index); // Add dot index to list
@@ -122,9 +122,9 @@ public class S_GameManager : MonoBehaviour
                         }
                     }
 
-                    canConnect = false;
+                    //canConnect = false;
                 }
-                else
+                /*else
                 {
                     // TODO: Fix Deselect dots
                     if (hit.transform.gameObject.tag == "dot" && canConnect)
@@ -150,7 +150,7 @@ public class S_GameManager : MonoBehaviour
                         canConnect = true;
                     }
                     
-                }
+                }*/
             }
         }
     }
