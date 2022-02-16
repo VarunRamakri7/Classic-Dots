@@ -28,7 +28,7 @@ public class S_GameManager : MonoBehaviour
         dotsIndices = new List<int[]>(); // Initialize List of indices
         dotNames = new List<string>(); // Initialize list of names
         squareMade = false;
-        canConnect = true;
+        //canConnect = true;
     }
 
     private void Update()
