@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class S_Dot
 {
-    public enum DotColors { RED, GREEN, BLUE };
+    public enum DotColors { RED, GREEN, BLUE }; // Possible colors of dots
 
-    private GameObject dot;
-    private Vector3 cellPos;
-    private Vector3 nextPos;
-    private bool isOccupied = false;
-    private int color;
-    private float speed = 1.0f;
+    private GameObject dot; // GameObject representing a dot
+    private Vector3 cellPos; // Position of dot in the grid
+    private Vector3 nextPos; // Position for dot to fall to
+    private bool isOccupied = false; // True if this cell is occupied in the grid
+    private int color; // Color of dot
+    private float speed = 1.0f; // Dropping speed
 
     /// <summary>
     /// Default Constructor

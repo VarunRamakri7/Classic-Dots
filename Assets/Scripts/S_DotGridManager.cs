@@ -7,18 +7,18 @@ public class S_DotGridManager : MonoBehaviour
     public static S_DotGridManager dotGridManager;
 
     [SerializeField]
-    private GameObject prefab;
+    private GameObject prefab; // Dot prefab
     [SerializeField]
-    private GameObject gridParent;
+    private GameObject gridParent; // Parent GameObject for grid
     [SerializeField]
-    private Vector3 startPos;
+    private Vector3 startPos; // Grid starting position
     [SerializeField]
-    private int[] gridSize;
+    private int[] gridSize; // Number of rows and columns for grid
     [SerializeField]
-    private float offset = 2.5f;
+    private float offset = 2.5f; // Space between dots
 
-    private char[] trimChar = { 'd', 'o', 't', '(', ')' };
-    private S_Dot[][] dotGrid;
+    private char[] trimChar = { 'd', 'o', 't', '(', ')' }; // Characters to remove from name
+    private S_Dot[][] dotGrid; // Grid of dots
 
     private void Start()
     {
@@ -275,7 +275,7 @@ public class S_DotGridManager : MonoBehaviour
     {
         if ((i >= 0 && i < gridSize[0]) && (j >= 0 && j < gridSize[1]) && (u >= 0 && u < gridSize[0]) && (v >= 0 && v < gridSize[1]) && (i != u))
         {
-            Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {3})", i, j, u, v));
+            //Debug.Log(string.Format("Moving from: ({0}, {1}) to ({2}, {3})", i, j, u, v));
     
             //StartCoroutine(AnimateDot(dotGrid[i][j].GetDot(), dotGrid[u][v].GetPosition()));
 

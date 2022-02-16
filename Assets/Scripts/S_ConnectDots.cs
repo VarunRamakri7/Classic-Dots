@@ -5,7 +5,7 @@ public class S_ConnectDots : MonoBehaviour
 {
     public S_ConnectDots connectDots;
 
-    private LineRenderer lineRenderer;
+    private LineRenderer lineRenderer; // Line renderer to connect dots
     private List<Vector3> positions; // Positions for line renderer
 
     private void Start()
@@ -35,6 +35,16 @@ public class S_ConnectDots : MonoBehaviour
         lineRenderer.enabled = true;
     }
 
+    /// <summary>
+    /// Empty the line and positions
+    /// </summary>
+    public void EmptyLine()
+    {
+        lineRenderer.enabled = false;
+        positions = new List<Vector3>(); // Reset positions
+    }
+
+    #region Getters and Setters
     /// <summary>
     /// Add position for Line renderer
     /// </summary>
@@ -85,15 +95,6 @@ public class S_ConnectDots : MonoBehaviour
     }
 
     /// <summary>
-    /// Empty the line and positions
-    /// </summary>
-    public void EmptyLine()
-    {
-        lineRenderer.enabled = false;
-        positions = new List<Vector3>(); // Reset positions
-    }
-
-    /// <summary>
     /// Set color of line rendered
     /// </summary>
     /// <param name="color">New color of line renderer</param>
@@ -111,4 +112,5 @@ public class S_ConnectDots : MonoBehaviour
     {
         return lineRenderer.endColor;
     }
+    #endregion
 }

@@ -247,7 +247,7 @@ public class S_GameManager : MonoBehaviour
         int i = 0;
         foreach (int[] index in dotsIndices)
         {
-            Debug.Log(string.Format("Adding ({0}, {1}) to line", index[0], index[1]));
+            //Debug.Log(string.Format("Adding ({0}, {1}) to line", index[0], index[1]));
 
             //connectionManager.SetPoint(i, gridManager.GetDotAt(index[0], index[1]).transform.position);
             connectionManager.AddPoint(gridManager.GetDotAt(index[0], index[1]).transform.position);
